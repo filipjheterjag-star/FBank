@@ -8,7 +8,7 @@ let currentBuyStock = null;
 let currentSellStock = null;
 let portfolioChart = null;
 
-// SVENSKA AKTIER MED API
+// SVENSKA AKTIER
 const stocks = [
     { ticker: 'AAPL', name: 'Apple Inc.', company: 'Apple' },
     { ticker: 'MSFT', name: 'Microsoft Corp.', company: 'Microsoft' },
@@ -22,12 +22,10 @@ const stocks = [
     { ticker: 'INTC', name: 'Intel Corp.', company: 'Intel' }
 ];
 
-// GENERA KONTONUMMER
 function generateAccountNumber() {
     return Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
 }
 
-// HÄMTA AKTIEPRISER
 async function fetchStockPrices() {
     for (let stock of stocks) {
         if (!stockPrices[stock.ticker]) {
@@ -45,7 +43,6 @@ async function fetchStockPrices() {
     localStorage.setItem('stockHistory', JSON.stringify(stockHistory));
 }
 
-// UPPDATERA AKTIEPRISER
 function updateStockPrices() {
     for (let stock of stocks) {
         if (stockPrices[stock.ticker]) {
@@ -55,13 +52,11 @@ function updateStockPrices() {
             stockPrices[stock.ticker].change = change;
             stockPrices[stock.ticker].lastUpdate = new Date().toLocaleTimeString('sv-SE');
             
-            // Lägg till i historik
             if (!stockHistory[stock.ticker]) {
                 stockHistory[stock.ticker] = [];
             }
             stockHistory[stock.ticker].push(stockPrices[stock.ticker].price);
             
-            // Håll bara de senaste 24 värdena
             if (stockHistory[stock.ticker].length > 24) {
                 stockHistory[stock.ticker].shift();
             }
@@ -71,11 +66,9 @@ function updateStockPrices() {
     localStorage.setItem('stockHistory', JSON.stringify(stockHistory));
 }
 
-// === SNABBSALDO FUNKTIONER ===
 function showQuickBalanceModal() {
     document.getElementById('quickBalanceModal').classList.remove('hidden');
     document.getElementById('quickBalanceUsername').value = '';
-    document.getElementById('quickBalanceUsername').focus();
 }
 
 function closeQuickBalanceModal() {
@@ -101,7 +94,6 @@ function showQuickBalance() {
     
     quickBalanceUser = username;
     document.getElementById('quickBalanceAmount').textContent = users[username].balance.toLocaleString('sv-SE') + ' kr';
-    document.getElementById('quickBalanceTime').textContent = 'Uppdaterat just nu';
     
     document.getElementById('quickBalanceModal').classList.add('hidden');
     document.getElementById('quickBalanceResultModal').classList.remove('hidden');
@@ -116,7 +108,6 @@ function addQuickBalance(amount) {
     }
 }
 
-// REGISTRERA NYT KONTO
 function register() {
     const username = document.getElementById('regUsername').value.trim();
     const email = document.getElementById('regEmail').value.trim();
@@ -163,7 +154,6 @@ function register() {
     document.getElementById('regPassword2').value = '';
 }
 
-// LOGGA IN
 function login() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
@@ -187,7 +177,6 @@ function login() {
     displayStocks();
 }
 
-// LOGGA UT
 function logout() {
     currentUser = null;
     quickBalanceUser = null;
@@ -198,19 +187,16 @@ function logout() {
     closeQuickBalanceResultModal();
 }
 
-// BYTA MELLAN LOGIN OCH REGISTRERA
 function toggleForms() {
     document.getElementById('loginForm').classList.toggle('hidden');
     document.getElementById('registerForm').classList.toggle('hidden');
 }
 
-// BYTA SKÄRM
 function switchScreen(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
 }
 
-// BYTA TAB
 function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -224,16 +210,14 @@ function switchTab(tabName) {
     }
 }
 
-// UPPDATERA DASHBOARD
 function updateDashboard() {
     const user = users[currentUser];
-    document.getElementById('userGreeting').textContent = `Hej, ${currentUser}!`;
+    document.getElementById('userGreeting').textContent = `${currentUser}`;
     document.getElementById('balanceDisplay').textContent = user.balance.toLocaleString('sv-SE') + ' kr';
-    document.getElementById('accountNumber').textContent = 'Kontonummer: ' + user.accountNumber;
+    document.getElementById('accountNumber').textContent = user.accountNumber;
     updateTransactionList();
 }
 
-// VISA AKTIER
 function displayStocks() {
     const list = document.getElementById('stocksList');
     const user = users[currentUser];
@@ -265,7 +249,6 @@ function displayStocks() {
     displayPortfolio();
 }
 
-// VISA PORTFÖLJÖ MED GRAF
 function displayPortfolio() {
     const user = users[currentUser];
     const portfolioSection = document.getElementById('portfolioSection');
@@ -300,13 +283,13 @@ function displayPortfolio() {
         
         html += `
             <div class="portfolio-item">
-                <div class="portfolio-info">
+                <div>
                     <div class="portfolio-name">${stock.name}</div>
-                    <div class="portfolio-qty">${qty} aktier @ ${buyPrice.toFixed(2)} kr</div>
+                    <div class="portfolio-qty">${qty} st @ ${buyPrice.toFixed(2)} kr</div>
                 </div>
-                <div class="portfolio-value">
+                <div>
                     <div class="portfolio-value-text">${value.toFixed(2)} kr</div>
-                    <div class="portfolio-gain ${gainClass}">${gain >= 0 ? '+' : ''}${gain.toFixed(2)} kr (${((gain/invested)*100).toFixed(1)}%)</div>
+                    <div class="portfolio-gain ${gainClass}">${gain >= 0 ? '+' : ''}${gain.toFixed(2)} kr</div>
                 </div>
             </div>
         `;
@@ -314,32 +297,29 @@ function displayPortfolio() {
     
     portfolioList.innerHTML = html;
     
-    // Visa statistik
     const gainPercent = totalInvested > 0 ? ((totalGain / totalInvested) * 100).toFixed(1) : 0;
     portfolioStats.innerHTML = `
         <div class="portfolio-stat">
             <div class="portfolio-stat-label">Investerat</div>
-            <div class="portfolio-stat-value">${totalInvested.toFixed(2)} kr</div>
+            <div class="portfolio-stat-value">${totalInvested.toFixed(0)} kr</div>
         </div>
         <div class="portfolio-stat">
-            <div class="portfolio-stat-label">Nuvarande Värde</div>
-            <div class="portfolio-stat-value">${totalValue.toFixed(2)} kr</div>
+            <div class="portfolio-stat-label">Värde</div>
+            <div class="portfolio-stat-value">${totalValue.toFixed(0)} kr</div>
         </div>
         <div class="portfolio-stat">
-            <div class="portfolio-stat-label">Vinst/Förlust</div>
-            <div class="portfolio-stat-value ${totalGain >= 0 ? 'positive' : 'negative'}">${totalGain >= 0 ? '+' : ''}${totalGain.toFixed(2)} kr</div>
+            <div class="portfolio-stat-label">Vinst</div>
+            <div class="portfolio-stat-value ${totalGain >= 0 ? 'positive' : 'negative'}">${totalGain >= 0 ? '+' : ''}${totalGain.toFixed(0)} kr</div>
         </div>
         <div class="portfolio-stat">
-            <div class="portfolio-stat-label">Förändring %</div>
+            <div class="portfolio-stat-label">%</div>
             <div class="portfolio-stat-value ${totalGain >= 0 ? 'positive' : 'negative'}">${totalGain >= 0 ? '+' : ''}${gainPercent}%</div>
         </div>
     `;
     
-    // Rita graf
     drawPortfolioChart();
 }
 
-// RITA PORTFÖLJÖGRAF
 function drawPortfolioChart() {
     const user = users[currentUser];
     const ctx = document.getElementById('portfolioChart');
@@ -349,7 +329,7 @@ function drawPortfolioChart() {
     const data = {
         labels: stocks.filter(s => user.stocks && user.stocks[s.ticker]).map(s => s.ticker),
         datasets: [{
-            label: 'Portföljavärde (kr)',
+            label: 'Portföljävärde',
             data: stocks.filter(s => user.stocks && user.stocks[s.ticker]).map(s => {
                 if (user.stocks[s.ticker]) {
                     const value = user.stocks[s.ticker].quantity * (stockPrices[s.ticker]?.price || user.stocks[s.ticker].avgPrice);
@@ -358,19 +338,10 @@ function drawPortfolioChart() {
                 return 0;
             }),
             backgroundColor: [
-                'rgba(0, 170, 68, 0.8)',
-                'rgba(0, 146, 58, 0.8)',
-                'rgba(0, 122, 48, 0.8)',
-                'rgba(0, 98, 38, 0.8)',
-                'rgba(52, 199, 89, 0.8)',
-                'rgba(34, 197, 94, 0.8)',
-                'rgba(16, 185, 129, 0.8)',
-                'rgba(20, 184, 166, 0.8)',
-                'rgba(34, 179, 172, 0.8)',
-                'rgba(45, 212, 191, 0.8)'
+                '#00AA44', '#FF6B35', '#00923A', '#E67E22', '#34C759',
+                '#3498DB', '#9B59B6', '#E74C3C', '#1ABC9C', '#F39C12'
             ],
-            borderColor: '#00AA44',
-            borderWidth: 2
+            borderWidth: 0
         }]
     };
     
@@ -379,7 +350,7 @@ function drawPortfolioChart() {
         portfolioChart.update();
     } else {
         portfolioChart = new Chart(ctx, {
-            type: 'pie',
+            type: 'doughnut',
             data: data,
             options: {
                 responsive: true,
@@ -398,11 +369,10 @@ function drawPortfolioChart() {
     }
 }
 
-// KÖP AKTIE MODAL
 function openBuyStockModal(ticker, name, price) {
     currentBuyStock = { ticker, name, price };
     document.getElementById('buyStockTitle').textContent = `Köp ${name}`;
-    document.getElementById('buyStockPrice').textContent = `Pris: ${price.toFixed(2)} kr per aktie`;
+    document.getElementById('buyStockPrice').textContent = `Pris: ${price.toFixed(2)} kr/st`;
     document.getElementById('buyStockQty').value = '1';
     updateBuyTotal();
     document.getElementById('buyStockModal').classList.remove('hidden');
@@ -463,7 +433,6 @@ function confirmBuyStock() {
     updateDashboard();
 }
 
-// SÄLJA AKTIE MODAL
 function openSellStockModal(ticker, name, price) {
     const user = users[currentUser];
     const owned = user.stocks[ticker].quantity;
@@ -472,13 +441,13 @@ function openSellStockModal(ticker, name, price) {
     
     currentSellStock = { ticker, name, price, maxQty: owned, buyPrice, gain };
     document.getElementById('sellStockTitle').textContent = `Sälja ${name}`;
-    document.getElementById('sellStockPrice').textContent = `Pris: ${price.toFixed(2)} kr per aktie (Du äger: ${owned} st)`;
+    document.getElementById('sellStockPrice').textContent = `Pris: ${price.toFixed(2)} kr/st`;
     document.getElementById('sellStockQty').value = '1';
     document.getElementById('sellStockQty').max = owned;
     
     const gainClass = gain >= 0 ? 'positive' : 'negative';
-    document.getElementById('sellStockGain').textContent = `Din totala vinst/förlust: ${gain >= 0 ? '+' : ''}${gain.toFixed(2)} kr (${((gain / (owned * buyPrice)) * 100).toFixed(1)}%)`;
-    document.getElementById('sellStockGain').className = `stock-gain-info ${gainClass}`;
+    document.getElementById('sellStockGain').textContent = `Potentiell vinst: ${gain >= 0 ? '+' : ''}${gain.toFixed(2)} kr`;
+    document.getElementById('sellStockGain').className = `modal-gain ${gainClass}`;
     
     updateSellTotal();
     document.getElementById('sellStockModal').classList.remove('hidden');
@@ -491,8 +460,7 @@ function closeSellStockModal() {
 function updateSellTotal() {
     const qty = parseInt(document.getElementById('sellStockQty').value) || 0;
     const total = qty * currentSellStock.price;
-    const qtyGain = qty * (currentSellStock.price - currentSellStock.buyPrice);
-    document.getElementById('sellStockTotal').textContent = `Du får: ${total.toFixed(2)} kr (Vinst: ${qtyGain >= 0 ? '+' : ''}${qtyGain.toFixed(2)} kr)`;
+    document.getElementById('sellStockTotal').textContent = `Du får: ${total.toFixed(2)} kr`;
 }
 
 function confirmSellStock() {
@@ -532,31 +500,26 @@ function confirmSellStock() {
     updateDashboard();
 }
 
-// VISA ÖVERFÖRINGSFORMULÄR
 function showTransferForm() {
     closeAllForms();
     document.getElementById('transferForm').classList.remove('hidden');
 }
 
-// VISA INSÄTTNINGSFORMULÄR
 function showDepositForm() {
     closeAllForms();
     document.getElementById('depositForm').classList.remove('hidden');
 }
 
-// VISA UTTAGSFORMULÄR
 function showWithdrawForm() {
     closeAllForms();
     document.getElementById('withdrawForm').classList.remove('hidden');
 }
 
-// VISA TRANSAKTIONSHISTORIK
 function showTransactionHistory() {
     closeAllForms();
     document.getElementById('transactionHistory').classList.remove('hidden');
 }
 
-// STÄNG FORMULÄR
 function closeForm() {
     closeAllForms();
 }
@@ -568,7 +531,6 @@ function closeAllForms() {
     document.getElementById('transactionHistory').classList.add('hidden');
 }
 
-// ÖVERFÖR PENGAR
 function transferMoney() {
     const recipient = document.getElementById('recipientUsername').value.trim();
     const amount = parseFloat(document.getElementById('transferAmount').value);
@@ -615,7 +577,7 @@ function transferMoney() {
 
     localStorage.setItem('fbankUsers', JSON.stringify(users));
     
-    showSuccess('Pengar överförda! ' + amount + ' kr skickades till ' + recipient);
+    showSuccess('Pengar överförda!');
     document.getElementById('recipientUsername').value = '';
     document.getElementById('transferAmount').value = '';
     document.getElementById('transferMessage').value = '';
@@ -624,7 +586,6 @@ function transferMoney() {
     updateDashboard();
 }
 
-// SÄTT IN PENGAR
 function depositMoney() {
     const amount = parseFloat(document.getElementById('depositAmount').value);
     const user = users[currentUser];
@@ -652,7 +613,6 @@ function depositMoney() {
     updateDashboard();
 }
 
-// TA UT PENGAR
 function withdrawMoney() {
     const amount = parseFloat(document.getElementById('withdrawAmount').value);
     const user = users[currentUser];
@@ -685,7 +645,6 @@ function withdrawMoney() {
     updateDashboard();
 }
 
-// UPPDATERA TRANSAKTIONSLISTA
 function updateTransactionList() {
     const user = users[currentUser];
     const list = document.getElementById('transactionList');
@@ -695,14 +654,13 @@ function updateTransactionList() {
         return;
     }
 
-    list.innerHTML = user.transactions.reverse().map((trans, index) => {
+    list.innerHTML = user.transactions.reverse().map((trans) => {
         const isIncome = trans.amount > 0;
         return `
             <div class="transaction-item">
                 <div class="transaction-info">
                     <div class="transaction-type">${trans.type}</div>
                     <div class="transaction-date">${trans.timestamp}</div>
-                    ${trans.message ? '<div class="transaction-date">' + trans.message + '</div>' : ''}
                 </div>
                 <div class="transaction-amount ${isIncome ? 'income' : 'expense'}">
                     ${isIncome ? '+' : ''} ${trans.amount.toLocaleString('sv-SE')} kr
@@ -712,7 +670,6 @@ function updateTransactionList() {
     }).join('');
 }
 
-// VISA FELMEDDELANDE
 function showError(message) {
     const errorDiv = document.getElementById('errorMessage');
     if (message) {
@@ -723,7 +680,6 @@ function showError(message) {
     }
 }
 
-// VISA FRAMGÅNGSMEDDELANDE
 function showSuccess(message) {
     const successDiv = document.getElementById('successMessage');
     successDiv.textContent = message;
@@ -734,7 +690,6 @@ function showSuccess(message) {
     }, 3000);
 }
 
-// Uppdatera köp/säljformulär dynamiskt
 document.addEventListener('input', function(e) {
     if (e.target.id === 'buyStockQty') updateBuyTotal();
     if (e.target.id === 'sellStockQty') updateSellTotal();
