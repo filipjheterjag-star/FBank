@@ -6,31 +6,25 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #f5f5f7;
-    min-height: 100vh;
-    color: #1d1d1f;
-}
-
-/* FÄRGER - SWEDBANK */
 :root {
     --swedbank-green: #00AA44;
-    --swedbank-dark-green: #006622;
-    --swedbank-light-green: #E8F5E9;
-    --swedbank-gray: #666666;
-    --swedbank-light-gray: #F5F5F7;
-    --swedbank-dark-gray: #1d1d1f;
-    --success-color: #34C759;
-    --error-color: #FF3B30;
-    --up-color: #34C759;
-    --down-color: #FF3B30;
+    --swedbank-orange: #FF6B35;
+    --swedbank-dark: #1A1A1E;
+    --swedbank-light: #F5F5F7;
+    --success-green: #34C759;
+    --error-red: #FF3B30;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--swedbank-light);
+    min-height: 100vh;
+    color: var(--swedbank-dark);
 }
 
 /* SKÄRMAR */
 .screen {
     display: none;
-    width: 100%;
 }
 
 .screen.active {
@@ -43,81 +37,61 @@ body {
     display: none;
     justify-content: center;
     align-items: center;
-    width: 100%;
     padding: 20px;
-    background: linear-gradient(135deg, #1a5f3f 0%, #0d3d28 100%);
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, #00923A 100%);
 }
 
 #loginScreen.active {
     display: flex;
 }
 
-.login-container {
+.login-wrapper {
     width: 100%;
-    max-width: 380px;
+    max-width: 420px;
 }
 
 .login-box {
     background: white;
-    border-radius: 20px;
-    padding: 45px 35px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    text-align: center;
+    border-radius: 24px;
+    padding: 50px 40px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
-.logo-container {
+.logo-section {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
-.logo {
-    width: 50px;
-    height: 50px;
-    background: var(--swedbank-green);
-    border-radius: 12px;
+.logo-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 800;
     color: white;
 }
 
 .logo-text {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 800;
-    color: var(--swedbank-green);
-    letter-spacing: -0.5px;
-}
-
-.logo-small {
-    width: 40px;
-    height: 40px;
-    background: var(--swedbank-green);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    font-weight: 800;
-    color: white;
-}
-
-.logo-text-small {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--swedbank-green);
-    margin-left: 8px;
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .tagline {
-    color: #888;
-    font-size: 13px;
-    margin-bottom: 35px;
-    letter-spacing: 0.3px;
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 40px;
+    text-align: center;
     font-weight: 500;
 }
 
@@ -130,9 +104,9 @@ body {
 }
 
 .form-section h2 {
-    font-size: 18px;
-    margin-bottom: 22px;
-    color: var(--swedbank-dark-gray);
+    font-size: 20px;
+    margin-bottom: 24px;
+    color: var(--swedbank-dark);
     font-weight: 700;
 }
 
@@ -140,11 +114,11 @@ body {
     width: 100%;
     padding: 14px 16px;
     margin-bottom: 14px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 10px;
+    border: 2px solid #E8E8E8;
+    border-radius: 12px;
     font-size: 15px;
     transition: all 0.3s;
-    background: #f9f9f9;
+    background: #FAFAFA;
     font-family: 'Inter', sans-serif;
 }
 
@@ -152,16 +126,16 @@ body {
     outline: none;
     border-color: var(--swedbank-green);
     background: white;
-    box-shadow: 0 0 0 3px rgba(0, 170, 68, 0.08);
+    box-shadow: 0 0 0 4px rgba(0, 170, 68, 0.1);
 }
 
 .btn-primary {
     width: 100%;
     padding: 14px;
-    background: var(--swedbank-green);
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
@@ -171,9 +145,8 @@ body {
 }
 
 .btn-primary:hover {
-    background: #00923A;
-    box-shadow: 0 8px 20px rgba(0, 170, 68, 0.3);
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 170, 68, 0.3);
 }
 
 .btn-primary:active {
@@ -183,79 +156,54 @@ body {
 .btn-secondary {
     width: 100%;
     padding: 12px;
-    background: #f0f0f0;
-    color: var(--swedbank-dark-gray);
-    border: 1.5px solid #e0e0e0;
-    border-radius: 10px;
+    background: transparent;
+    color: var(--swedbank-green);
+    border: 2px solid var(--swedbank-green);
+    border-radius: 12px;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 16px;
     transition: all 0.3s;
     font-family: 'Inter', sans-serif;
 }
 
 .btn-secondary:hover {
-    background: #e8e8e8;
-    border-color: var(--swedbank-green);
-    color: var(--swedbank-green);
+    background: var(--swedbank-green);
+    color: white;
 }
 
-.toggle-text {
+.form-link {
     text-align: center;
     margin-top: 20px;
     color: #666;
-    font-size: 13px;
+    font-size: 14px;
 }
 
-.toggle-text a {
+.form-link a {
     color: var(--swedbank-green);
     cursor: pointer;
     font-weight: 700;
     text-decoration: none;
 }
 
-.toggle-text a:hover {
+.form-link a:hover {
     text-decoration: underline;
 }
 
 .error-message {
-    color: var(--error-color);
+    color: var(--error-red);
     font-size: 13px;
     margin-top: 15px;
     padding: 12px 14px;
-    background: #ffebee;
-    border-radius: 10px;
-    border-left: 4px solid var(--error-color);
+    background: #FFE8E8;
+    border-radius: 12px;
+    border-left: 4px solid var(--error-red);
     display: none;
-    font-family: 'Inter', sans-serif;
 }
 
 .error-message.show {
     display: block;
-}
-
-/* SNABBSALDO KNAPP */
-.btn-snabbsaldo {
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    color: var(--swedbank-green);
-    border: 2px solid var(--swedbank-green);
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 18px;
-    transition: all 0.3s;
-    font-family: 'Inter', sans-serif;
-}
-
-.btn-snabbsaldo:hover {
-    background: var(--swedbank-green);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 170, 68, 0.2);
 }
 
 /* MODAL */
@@ -285,28 +233,23 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     z-index: -1;
 }
 
 .modal-content {
     background: white;
-    border-radius: 20px;
+    border-radius: 24px;
     padding: 45px 35px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    max-width: 380px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    max-width: 420px;
     width: 90%;
     position: relative;
     max-height: 90vh;
     overflow-y: auto;
 }
 
-.modal-result {
-    padding: 50px 35px;
-}
-
-.btn-close-modal {
+.btn-close {
     position: absolute;
     top: 18px;
     right: 18px;
@@ -316,48 +259,71 @@ body {
     color: #999;
     cursor: pointer;
     transition: color 0.3s;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.btn-close-modal:hover {
-    color: var(--swedbank-dark-gray);
+.btn-close:hover {
+    color: var(--swedbank-dark);
 }
 
 .modal-title {
     color: var(--swedbank-green);
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 800;
-    margin-bottom: 25px;
-    font-family: 'Inter', sans-serif;
+    margin-bottom: 20px;
 }
 
-.balance-result-label {
-    color: #888;
-    font-size: 12px;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.modal-price {
+    font-size: 16px;
     font-weight: 700;
-    font-family: 'Inter', sans-serif;
+    color: #666;
+    margin-bottom: 20px;
 }
 
-.balance-result-amount {
+.modal-total {
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
     color: var(--swedbank-green);
-    font-size: 52px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    font-family: 'Inter', sans-serif;
-    letter-spacing: -1px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #F0F0F0;
+    border-radius: 12px;
 }
 
-.balance-result-time {
+.modal-gain {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #F0F0F0;
+}
+
+.modal-gain.positive {
+    color: var(--success-green);
+    background: rgba(52, 199, 89, 0.1);
+}
+
+.modal-gain.negative {
+    color: var(--error-red);
+    background: rgba(255, 59, 48, 0.1);
+}
+
+.balance-label {
     color: #999;
-    font-size: 12px;
-    margin-bottom: 28px;
-    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.balance-big {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--swedbank-green);
+    margin-bottom: 16px;
 }
 
 .balance-shortcuts {
@@ -369,9 +335,9 @@ body {
 
 .shortcut-btn {
     padding: 12px;
-    background: var(--swedbank-light-green);
-    border: 2px solid #00AA44;
-    border-radius: 10px;
+    background: #F0F0F0;
+    border: 2px solid var(--swedbank-green);
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 700;
     color: var(--swedbank-green);
@@ -383,14 +349,12 @@ body {
 .shortcut-btn:hover {
     background: var(--swedbank-green);
     color: white;
-    transform: translateY(-2px);
 }
 
 /* DASHBOARD */
 #dashboardScreen {
-    background: var(--swedbank-light-gray);
+    background: var(--swedbank-light);
     min-height: 100vh;
-    padding-bottom: 30px;
     display: none;
 }
 
@@ -400,31 +364,44 @@ body {
 
 .header {
     background: white;
-    padding: 16px 30px;
+    padding: 16px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border-bottom: 3px solid var(--swedbank-green);
 }
 
-.header-left {
+.header-content {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
-.header-right {
+.logo-small {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
+    border-radius: 10px;
     display: flex;
     align-items: center;
-    gap: 25px;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: white;
 }
 
-.user-name {
-    color: var(--swedbank-dark-gray);
+.logo-text-small {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--swedbank-green);
+}
+
+.user-greeting {
+    margin-left: 16px;
+    color: var(--swedbank-dark);
     font-weight: 700;
     font-size: 14px;
-    font-family: 'Inter', sans-serif;
 }
 
 .btn-logout {
@@ -445,22 +422,22 @@ body {
     color: white;
 }
 
-.dashboard-container {
-    max-width: 1200px;
+.main-content {
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 30px 20px;
+    padding: 24px 20px;
 }
 
 /* NAVIGATION TABS */
 .nav-tabs {
     display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #e0e0e0;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #E8E8E8;
 }
 
 .nav-tab {
-    padding: 14px 20px;
+    padding: 12px 20px;
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
@@ -490,108 +467,119 @@ body {
     display: block;
 }
 
-/* SALDO KORT - SWEDBANK STIL */
+/* SALDO KORT */
 .balance-card {
-    background: linear-gradient(135deg, var(--swedbank-green) 0%, #00923A 100%);
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
     color: white;
     padding: 40px;
-    border-radius: 18px;
-    margin-bottom: 30px;
-    box-shadow: 0 8px 24px rgba(0, 170, 68, 0.25);
+    border-radius: 20px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 24px rgba(0, 170, 68, 0.2);
 }
 
-.balance-label {
-    font-size: 12px;
+.balance-inner {
+    margin: 0;
+}
+
+.balance-card .balance-label {
     color: rgba(255, 255, 255, 0.85);
     margin-bottom: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-family: 'Inter', sans-serif;
 }
 
-.balance-amount {
-    font-size: 56px;
-    font-weight: 800;
+.balance-card .balance-big {
     color: white;
-    margin-bottom: 18px;
-    letter-spacing: -1.5px;
-    font-family: 'Inter', sans-serif;
+    font-size: 52px;
+    margin-bottom: 16px;
 }
 
 .account-number {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.75);
     font-weight: 600;
-    font-family: 'Inter', sans-serif;
-    letter-spacing: 0.3px;
 }
 
-/* SNABB-ÅTGÄRDER */
-.quick-actions {
+/* ACTIONS GRID */
+.actions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
 }
 
-.action-btn {
+.action-card {
     background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 14px;
+    border: 2px solid #E8E8E8;
+    border-radius: 16px;
     padding: 24px 16px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s;
     font-size: 13px;
     font-weight: 700;
-    color: var(--swedbank-dark-gray);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    color: var(--swedbank-dark);
     font-family: 'Inter', sans-serif;
 }
 
-.action-btn:hover {
+.action-card:hover {
     border-color: var(--swedbank-green);
-    color: var(--swedbank-green);
     box-shadow: 0 8px 20px rgba(0, 170, 68, 0.15);
     transform: translateY(-4px);
 }
 
-.action-btn:active {
-    transform: translateY(-1px);
-}
-
 .action-icon {
-    font-size: 36px;
-    margin-bottom: 12px;
+    font-size: 32px;
+    margin-bottom: 10px;
 }
 
-/* TRANSAKTIONSFORMULÄR */
-.transaction-form {
+/* FORM CARDS */
+.form-card {
     background: white;
-    padding: 30px;
+    padding: 28px;
     border-radius: 16px;
-    margin-bottom: 30px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e0e0e0;
+    border: 1px solid #E8E8E8;
+    margin-bottom: 24px;
     display: none;
 }
 
-.transaction-form.hidden {
+.form-card.hidden {
     display: none;
 }
 
-.transaction-form:not(.hidden) {
+.form-card:not(.hidden) {
     display: block;
     animation: slideDown 0.3s ease;
 }
 
-.transaction-form h3 {
-    margin-bottom: 22px;
-    color: var(--swedbank-dark-gray);
+.form-card h3 {
+    margin-bottom: 20px;
+    color: var(--swedbank-dark);
     font-size: 18px;
     font-weight: 700;
-    font-family: 'Inter', sans-serif;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: var(--swedbank-dark);
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.button-group .btn-primary,
+.button-group .btn-secondary {
+    margin-top: 0;
 }
 
 textarea.input-field {
@@ -600,33 +588,7 @@ textarea.input-field {
     font-family: 'Inter', sans-serif;
 }
 
-/* TRANSAKTIONSHISTORIK */
-.transaction-section {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e0e0e0;
-    display: none;
-}
-
-.transaction-section.hidden {
-    display: none;
-}
-
-.transaction-section:not(.hidden) {
-    display: block;
-    animation: slideDown 0.3s ease;
-}
-
-.transaction-section h3 {
-    margin-bottom: 22px;
-    color: var(--swedbank-dark-gray);
-    font-size: 18px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-}
-
+/* TRANSAKTIONSLISTA */
 .transaction-list {
     max-height: 500px;
     overflow-y: auto;
@@ -636,16 +598,16 @@ textarea.input-field {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 14px 0;
+    border-bottom: 1px solid #E8E8E8;
     transition: background 0.2s;
 }
 
 .transaction-item:hover {
-    background: #f9f9f9;
-    padding: 16px 12px;
-    border-radius: 8px;
+    background: #F9F9F9;
+    padding: 14px 12px;
     margin: 0 -12px;
+    border-radius: 8px;
 }
 
 .transaction-item:last-child {
@@ -658,82 +620,57 @@ textarea.input-field {
 
 .transaction-type {
     font-weight: 700;
-    color: var(--swedbank-dark-gray);
-    margin-bottom: 6px;
+    color: var(--swedbank-dark);
+    margin-bottom: 4px;
     font-size: 14px;
-    font-family: 'Inter', sans-serif;
 }
 
 .transaction-date {
     font-size: 12px;
     color: #999;
-    font-family: 'Inter', sans-serif;
 }
 
 .transaction-amount {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     text-align: right;
     margin-left: 20px;
-    font-family: 'Inter', sans-serif;
 }
 
 .transaction-amount.income {
-    color: var(--success-color);
+    color: var(--success-green);
 }
 
 .transaction-amount.expense {
-    color: var(--swedbank-dark-gray);
+    color: var(--swedbank-dark);
 }
 
-/* AKTIEDEPÅ SEKTION */
+/* STOCKS HEADER */
 .stocks-header {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .stocks-header h2 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
-    color: var(--swedbank-dark-gray);
-    margin-bottom: 8px;
+    color: var(--swedbank-dark);
 }
 
-.stocks-info {
-    color: #999;
-    font-size: 13px;
-}
-
-.stocks-section {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e0e0e0;
-    margin-bottom: 30px;
-}
-
-.stocks-section h3 {
-    margin-bottom: 22px;
-    color: var(--swedbank-dark-gray);
-    font-size: 18px;
-    font-weight: 700;
-}
-
+/* STOCKS LIST */
 .stocks-list {
     display: grid;
-    gap: 16px;
+    gap: 12px;
 }
 
 .stock-card {
-    background: #f9f9f9;
-    padding: 18px;
+    background: #FAFAFA;
+    padding: 16px;
     border-radius: 14px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #E8E8E8;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.3s;
-    cursor: pointer;
 }
 
 .stock-card:hover {
@@ -748,8 +685,8 @@ textarea.input-field {
 .stock-name {
     font-weight: 700;
     font-size: 15px;
-    color: var(--swedbank-dark-gray);
-    margin-bottom: 6px;
+    color: var(--swedbank-dark);
+    margin-bottom: 4px;
 }
 
 .stock-ticker {
@@ -765,7 +702,7 @@ textarea.input-field {
 .stock-price {
     font-size: 16px;
     font-weight: 800;
-    color: var(--swedbank-dark-gray);
+    color: var(--swedbank-dark);
 }
 
 .stock-change {
@@ -775,20 +712,20 @@ textarea.input-field {
 }
 
 .stock-change.up {
-    color: var(--up-color);
+    color: var(--success-green);
 }
 
 .stock-change.down {
-    color: var(--down-color);
+    color: var(--error-red);
 }
 
 .stock-actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .stock-action-btn {
-    padding: 10px 16px;
+    padding: 8px 14px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -799,112 +736,109 @@ textarea.input-field {
 }
 
 .btn-buy {
-    background: var(--swedbank-green);
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
     color: white;
 }
 
 .btn-buy:hover {
-    background: #00923A;
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 170, 68, 0.3);
 }
 
 .btn-sell {
-    background: #f0f0f0;
-    color: var(--swedbank-dark-gray);
-    border: 1px solid #e0e0e0;
+    background: #F0F0F0;
+    color: var(--swedbank-dark);
+    border: 1px solid #E8E8E8;
 }
 
 .btn-sell:hover {
-    background: #e0e0e0;
+    background: #E8E8E8;
 }
 
 /* PORTFÖLJÖ */
-.portfolio-section {
+.portfolio-card {
     background: white;
-    padding: 30px;
+    padding: 28px;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e0e0e0;
-    margin-bottom: 30px;
+    border: 1px solid #E8E8E8;
+    margin-bottom: 24px;
     display: none;
 }
 
-.portfolio-section.show {
+.portfolio-card.show {
     display: block;
 }
 
-.portfolio-section h3 {
-    margin-bottom: 22px;
-    color: var(--swedbank-dark-gray);
+.portfolio-card h3 {
+    margin-bottom: 20px;
+    color: var(--swedbank-dark);
     font-size: 18px;
     font-weight: 700;
 }
 
 .portfolio-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
 .portfolio-stat {
-    background: #f9f9f9;
-    padding: 16px;
+    background: #FAFAFA;
+    padding: 14px;
     border-radius: 12px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #E8E8E8;
 }
 
 .portfolio-stat-label {
-    font-size: 12px;
+    font-size: 11px;
     color: #999;
     font-weight: 700;
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .portfolio-stat-value {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
-    color: var(--swedbank-dark-gray);
+    color: var(--swedbank-dark);
 }
 
 .portfolio-stat-value.positive {
-    color: var(--up-color);
+    color: var(--success-green);
 }
 
 .portfolio-stat-value.negative {
-    color: var(--down-color);
+    color: var(--error-red);
 }
 
 .chart-container {
     position: relative;
-    height: 300px;
-    margin-bottom: 28px;
+    height: 280px;
+    margin-bottom: 24px;
 }
 
 .portfolio-list {
     display: grid;
-    gap: 14px;
+    gap: 12px;
 }
 
 .portfolio-item {
-    background: #f9f9f9;
-    padding: 16px;
+    background: #FAFAFA;
+    padding: 14px;
     border-radius: 12px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #E8E8E8;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.portfolio-info {
-    flex: 1;
-}
-
 .portfolio-name {
     font-weight: 700;
-    color: var(--swedbank-dark-gray);
+    color: var(--swedbank-dark);
     margin-bottom: 4px;
+    font-size: 14px;
 }
 
 .portfolio-qty {
@@ -912,14 +846,10 @@ textarea.input-field {
     color: #999;
 }
 
-.portfolio-value {
-    text-align: right;
-}
-
 .portfolio-value-text {
     font-weight: 700;
-    font-size: 16px;
-    color: var(--swedbank-dark-gray);
+    font-size: 15px;
+    color: var(--swedbank-dark);
 }
 
 .portfolio-gain {
@@ -929,81 +859,31 @@ textarea.input-field {
 }
 
 .portfolio-gain.positive {
-    color: var(--success-color);
+    color: var(--success-green);
 }
 
 .portfolio-gain.negative {
-    color: var(--error-color);
+    color: var(--error-red);
 }
 
-/* STOCK INPUT GROUP */
-.stock-input-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.stock-input-group label {
-    display: block;
-    font-weight: 700;
-    font-size: 13px;
-    margin-bottom: 8px;
-    color: var(--swedbank-dark-gray);
-}
-
-.stock-price-modal {
-    font-size: 16px;
-    font-weight: 700;
-    color: #999;
-    margin-bottom: 20px;
-}
-
-.stock-total {
-    text-align: center;
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--swedbank-green);
-    margin-bottom: 20px;
-}
-
-.stock-gain-info {
-    text-align: center;
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    padding: 12px;
-    border-radius: 8px;
-    background: #f9f9f9;
-}
-
-.stock-gain-info.positive {
-    color: var(--up-color);
-    background: rgba(52, 199, 89, 0.1);
-}
-
-.stock-gain-info.negative {
-    color: var(--down-color);
-    background: rgba(255, 59, 48, 0.1);
-}
-
-/* MEDDELANDEN */
-.success-message {
+/* TOAST MESSAGE */
+.toast-message {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: var(--success-color);
+    background: var(--success-green);
     color: white;
-    padding: 16px 20px;
-    border-radius: 10px;
+    padding: 14px 20px;
+    border-radius: 12px;
     display: none;
     z-index: 1000;
     animation: slideIn 0.3s ease-in-out;
     font-weight: 700;
     font-size: 13px;
     box-shadow: 0 8px 20px rgba(52, 199, 89, 0.3);
-    font-family: 'Inter', sans-serif;
 }
 
-.success-message.show {
+.toast-message.show {
     display: block;
 }
 
@@ -1029,56 +909,32 @@ textarea.input-field {
     }
 }
 
-/* RESPONSIV DESIGN */
+/* RESPONSIV */
 @media (max-width: 768px) {
     .login-box {
         padding: 35px 25px;
     }
 
-    .balance-amount {
-        font-size: 44px;
+    .balance-card .balance-big {
+        font-size: 40px;
     }
 
-    .quick-actions {
+    .actions-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
     .header {
         flex-direction: column;
-        gap: 15px;
-        padding: 14px 20px;
+        gap: 12px;
     }
 
-    .header-right {
-        width: 100%;
-        justify-content: space-between;
-        gap: 15px;
-    }
-
-    .dashboard-container {
-        padding: 20px 15px;
-    }
-
-    .balance-card {
-        padding: 30px 25px;
-    }
-
-    .transaction-form {
-        padding: 25px 20px;
-    }
-
-    .transaction-section {
-        padding: 25px 20px;
-    }
-
-    .success-message {
-        left: 10px;
-        right: 10px;
+    .main-content {
+        padding: 16px 15px;
     }
 
     .modal-content {
         max-width: 90%;
-        padding: 40px 25px;
+        padding: 35px 25px;
     }
 
     .stock-card {
@@ -1101,43 +957,31 @@ textarea.input-field {
         flex: 1;
     }
 
+    .button-group {
+        grid-template-columns: 1fr;
+    }
+
     .portfolio-stats {
         grid-template-columns: repeat(2, 1fr);
     }
 
     .chart-container {
-        height: 250px;
+        height: 240px;
     }
 }
 
 @media (max-width: 480px) {
-    .quick-actions {
+    .actions-grid {
         grid-template-columns: 1fr;
     }
 
-    .balance-amount {
-        font-size: 38px;
+    .balance-card .balance-big {
+        font-size: 36px;
     }
 
-    .action-btn {
-        padding: 20px 12px;
-    }
-
-    .action-icon {
-        font-size: 28px;
-    }
-
-    .balance-result-amount {
-        font-size: 42px;
-    }
-
-    .logo-container {
+    .logo-section {
         flex-direction: column;
         gap: 8px;
-    }
-
-    .modal-content {
-        padding: 35px 20px;
     }
 
     .nav-tabs {
@@ -1145,8 +989,8 @@ textarea.input-field {
     }
 
     .nav-tab {
-        padding: 12px 16px;
-        font-size: 13px;
+        padding: 10px 16px;
+        font-size: 12px;
     }
 
     .portfolio-stats {
@@ -1155,5 +999,10 @@ textarea.input-field {
 
     .chart-container {
         height: 200px;
+    }
+
+    .toast-message {
+        left: 10px;
+        right: 10px;
     }
 }
