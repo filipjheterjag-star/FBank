@@ -10,21 +10,20 @@
 <body>
     <!-- LOGIN SKÄRM -->
     <div id="loginScreen" class="screen active">
-        <div class="login-container">
-            <!-- LOGIN FORMULÄR -->
-            <div id="loginFormSection" class="login-box">
-                <div class="logo-container">
-                    <div class="logo">F</div>
+        <div class="login-wrapper">
+            <div class="login-box">
+                <div class="logo-section">
+                    <div class="logo-icon">F</div>
                     <div class="logo-text">FBank</div>
                 </div>
                 <p class="tagline">Din Digitala Bank</p>
                 
                 <div id="loginForm" class="form-section">
                     <h2>Logga In</h2>
-                    <input type="text" id="loginUsername" placeholder="Användarnamn eller personnummer" class="input-field">
+                    <input type="text" id="loginUsername" placeholder="Användarnamn" class="input-field">
                     <input type="password" id="loginPassword" placeholder="Lösenord" class="input-field">
                     <button onclick="login()" class="btn-primary">Logga In</button>
-                    <p class="toggle-text">Inte medlem? <a onclick="toggleForms()">Öppna konto</a></p>
+                    <p class="form-link">Inte medlem? <a onclick="toggleForms()">Öppna konto</a></p>
                 </div>
 
                 <div id="registerForm" class="form-section hidden">
@@ -34,34 +33,33 @@
                     <input type="password" id="regPassword" placeholder="Lösenord" class="input-field">
                     <input type="password" id="regPassword2" placeholder="Bekräfta lösenord" class="input-field">
                     <button onclick="register()" class="btn-primary">Öppna Konto</button>
-                    <p class="toggle-text">Redan medlem? <a onclick="toggleForms()">Logga in</a></p>
+                    <p class="form-link">Redan medlem? <a onclick="toggleForms()">Logga in</a></p>
                 </div>
 
                 <div id="errorMessage" class="error-message"></div>
                 
                 <!-- SNABBSALDO KNAPP -->
-                <button onclick="showQuickBalanceModal()" class="btn-snabbsaldo">Se Snabbsaldo</button>
+                <button onclick="showQuickBalanceModal()" class="btn-secondary">Se Snabbsaldo</button>
             </div>
 
             <!-- SNABBSALDO MODAL -->
             <div id="quickBalanceModal" class="modal hidden">
                 <div class="modal-overlay" onclick="closeQuickBalanceModal()"></div>
                 <div class="modal-content">
-                    <button onclick="closeQuickBalanceModal()" class="btn-close-modal">✕</button>
-                    <h2 class="modal-title">Se ditt saldo utan att logga in</h2>
-                    <input type="text" id="quickBalanceUsername" placeholder="Ange ditt användarnamn" class="input-field">
-                    <button onclick="showQuickBalance()" class="btn-primary">Se Snabbsaldo</button>
+                    <button onclick="closeQuickBalanceModal()" class="btn-close">✕</button>
+                    <h2 class="modal-title">Snabbsaldo</h2>
+                    <input type="text" id="quickBalanceUsername" placeholder="Användarnamn" class="input-field">
+                    <button onclick="showQuickBalance()" class="btn-primary">Visa Saldo</button>
                 </div>
             </div>
 
             <!-- SNABBSALDO RESULTAT MODAL -->
             <div id="quickBalanceResultModal" class="modal hidden">
                 <div class="modal-overlay" onclick="closeQuickBalanceResultModal()"></div>
-                <div class="modal-content modal-result">
-                    <button onclick="closeQuickBalanceResultModal()" class="btn-close-modal">✕</button>
-                    <p class="balance-result-label">Ditt Saldo</p>
-                    <h2 id="quickBalanceAmount" class="balance-result-amount">0 kr</h2>
-                    <p id="quickBalanceTime" class="balance-result-time">Uppdaterat just nu</p>
+                <div class="modal-content">
+                    <button onclick="closeQuickBalanceResultModal()" class="btn-close">✕</button>
+                    <p class="balance-label">Ditt Saldo</p>
+                    <h2 id="quickBalanceAmount" class="balance-big">0 kr</h2>
                     
                     <div class="balance-shortcuts">
                         <button class="shortcut-btn" onclick="addQuickBalance(100)">+100</button>
@@ -79,17 +77,15 @@
     <!-- DASHBOARD SKÄRM -->
     <div id="dashboardScreen" class="screen">
         <div class="header">
-            <div class="header-left">
+            <div class="header-content">
                 <div class="logo-small">F</div>
                 <span class="logo-text-small">FBank</span>
+                <span id="userGreeting" class="user-greeting"></span>
             </div>
-            <div class="header-right">
-                <span id="userGreeting" class="user-name"></span>
-                <button onclick="logout()" class="btn-logout">Logga Ut</button>
-            </div>
+            <button onclick="logout()" class="btn-logout">Logga Ut</button>
         </div>
 
-        <div class="dashboard-container">
+        <div class="main-content">
             <!-- NAVIGATION TABS -->
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="switchTab('konto')">Konto</button>
@@ -100,57 +96,65 @@
             <div id="kontoTab" class="tab-content active">
                 <!-- SALDO KORT -->
                 <div class="balance-card">
-                    <p class="balance-label">Totalt Saldo</p>
-                    <h2 id="balanceDisplay" class="balance-amount">0 kr</h2>
-                    <p class="account-number" id="accountNumber">Kontonummer: ----</p>
+                    <div class="balance-inner">
+                        <p class="balance-label">Totalt Saldo</p>
+                        <h2 id="balanceDisplay" class="balance-big">0 kr</h2>
+                        <p class="account-number" id="accountNumber">----</p>
+                    </div>
                 </div>
 
                 <!-- SNABB-ÅTGÄRDER -->
-                <div class="quick-actions">
-                    <button class="action-btn" onclick="showTransferForm()">
+                <div class="actions-grid">
+                    <button class="action-card" onclick="showTransferForm()">
                         <div class="action-icon">💸</div>
                         <p>Överför</p>
                     </button>
-                    <button class="action-btn" onclick="showDepositForm()">
+                    <button class="action-card" onclick="showDepositForm()">
                         <div class="action-icon">💰</div>
                         <p>Sätt In</p>
                     </button>
-                    <button class="action-btn" onclick="showWithdrawForm()">
+                    <button class="action-card" onclick="showWithdrawForm()">
                         <div class="action-icon">🏧</div>
                         <p>Ta Ut</p>
                     </button>
-                    <button class="action-btn" onclick="showTransactionHistory()">
-                        <div class="action-icon">📊</div>
+                    <button class="action-card" onclick="showTransactionHistory()">
+                        <div class="action-icon">📜</div>
                         <p>Historik</p>
                     </button>
                 </div>
 
                 <!-- TRANSAKTIONSFORMULÄR -->
-                <div id="transferForm" class="transaction-form hidden">
+                <div id="transferForm" class="form-card hidden">
                     <h3>Överför Pengar</h3>
                     <input type="text" id="recipientUsername" placeholder="Mottagares användarnamn" class="input-field">
                     <input type="number" id="transferAmount" placeholder="Belopp (kr)" class="input-field" min="1">
                     <textarea id="transferMessage" placeholder="Meddelande (valfritt)" class="input-field"></textarea>
-                    <button onclick="transferMoney()" class="btn-primary">Skicka</button>
-                    <button onclick="closeForm()" class="btn-secondary">Avbryt</button>
+                    <div class="button-group">
+                        <button onclick="transferMoney()" class="btn-primary">Skicka</button>
+                        <button onclick="closeForm()" class="btn-secondary">Avbryt</button>
+                    </div>
                 </div>
 
-                <div id="depositForm" class="transaction-form hidden">
+                <div id="depositForm" class="form-card hidden">
                     <h3>Sätt In Pengar</h3>
                     <input type="number" id="depositAmount" placeholder="Belopp (kr)" class="input-field" min="1">
-                    <button onclick="depositMoney()" class="btn-primary">Sätt In</button>
-                    <button onclick="closeForm()" class="btn-secondary">Avbryt</button>
+                    <div class="button-group">
+                        <button onclick="depositMoney()" class="btn-primary">Sätt In</button>
+                        <button onclick="closeForm()" class="btn-secondary">Avbryt</button>
+                    </div>
                 </div>
 
-                <div id="withdrawForm" class="transaction-form hidden">
+                <div id="withdrawForm" class="form-card hidden">
                     <h3>Ta Ut Pengar</h3>
                     <input type="number" id="withdrawAmount" placeholder="Belopp (kr)" class="input-field" min="1">
-                    <button onclick="withdrawMoney()" class="btn-primary">Ta Ut</button>
-                    <button onclick="closeForm()" class="btn-secondary">Avbryt</button>
+                    <div class="button-group">
+                        <button onclick="withdrawMoney()" class="btn-primary">Ta Ut</button>
+                        <button onclick="closeForm()" class="btn-secondary">Avbryt</button>
+                    </div>
                 </div>
 
                 <!-- TRANSAKTIONSHISTORIK -->
-                <div id="transactionHistory" class="transaction-section hidden">
+                <div id="transactionHistory" class="form-card hidden">
                     <h3>Transaktionshistorik</h3>
                     <div id="transactionList" class="transaction-list"></div>
                     <button onclick="closeForm()" class="btn-secondary">Stäng</button>
@@ -161,11 +165,10 @@
             <div id="aktierTab" class="tab-content">
                 <div class="stocks-header">
                     <h2>Aktiedepå</h2>
-                    <p class="stocks-info">Handla med riktiga aktiers nuvarande pris</p>
                 </div>
 
                 <!-- PORTFÖLJÖ MED GRAF -->
-                <div class="portfolio-section hidden" id="portfolioSection">
+                <div class="portfolio-card hidden" id="portfolioSection">
                     <h3>Min Portfölj</h3>
                     <div id="portfolioStats" class="portfolio-stats"></div>
                     <div class="chart-container">
@@ -175,7 +178,7 @@
                 </div>
 
                 <!-- TILLGÄNGLIGA AKTIER -->
-                <div class="stocks-section">
+                <div class="form-card">
                     <h3>Tillgängliga Aktier</h3>
                     <div id="stocksList" class="stocks-list"></div>
                 </div>
@@ -184,16 +187,18 @@
                 <div id="buyStockModal" class="modal hidden">
                     <div class="modal-overlay" onclick="closeBuyStockModal()"></div>
                     <div class="modal-content">
-                        <button onclick="closeBuyStockModal()" class="btn-close-modal">✕</button>
+                        <button onclick="closeBuyStockModal()" class="btn-close">✕</button>
                         <h2 class="modal-title" id="buyStockTitle">Köp Aktie</h2>
-                        <p id="buyStockPrice" class="stock-price-modal"></p>
-                        <div class="stock-input-group">
+                        <p id="buyStockPrice" class="modal-price"></p>
+                        <div class="form-group">
                             <label>Antal aktier:</label>
                             <input type="number" id="buyStockQty" placeholder="1" class="input-field" min="1">
                         </div>
-                        <p id="buyStockTotal" class="stock-total"></p>
-                        <button onclick="confirmBuyStock()" class="btn-primary">Köp</button>
-                        <button onclick="closeBuyStockModal()" class="btn-secondary">Avbryt</button>
+                        <p id="buyStockTotal" class="modal-total"></p>
+                        <div class="button-group">
+                            <button onclick="confirmBuyStock()" class="btn-primary">Köp</button>
+                            <button onclick="closeBuyStockModal()" class="btn-secondary">Avbryt</button>
+                        </div>
                     </div>
                 </div>
 
@@ -201,24 +206,26 @@
                 <div id="sellStockModal" class="modal hidden">
                     <div class="modal-overlay" onclick="closeSellStockModal()"></div>
                     <div class="modal-content">
-                        <button onclick="closeSellStockModal()" class="btn-close-modal">✕</button>
+                        <button onclick="closeSellStockModal()" class="btn-close">✕</button>
                         <h2 class="modal-title" id="sellStockTitle">Sälja Aktie</h2>
-                        <p id="sellStockPrice" class="stock-price-modal"></p>
-                        <div class="stock-input-group">
+                        <p id="sellStockPrice" class="modal-price"></p>
+                        <div class="form-group">
                             <label>Antal aktier:</label>
                             <input type="number" id="sellStockQty" placeholder="1" class="input-field" min="1" max="1">
                         </div>
-                        <p id="sellStockGain" class="stock-gain-info"></p>
-                        <p id="sellStockTotal" class="stock-total"></p>
-                        <button onclick="confirmSellStock()" class="btn-primary">Sälja</button>
-                        <button onclick="closeSellStockModal()" class="btn-secondary">Avbryt</button>
+                        <p id="sellStockGain" class="modal-gain"></p>
+                        <p id="sellStockTotal" class="modal-total"></p>
+                        <div class="button-group">
+                            <button onclick="confirmSellStock()" class="btn-primary">Sälja</button>
+                            <button onclick="closeSellStockModal()" class="btn-secondary">Avbryt</button>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- MEDDELANDEBOX -->
-            <div id="successMessage" class="success-message"></div>
         </div>
+
+        <!-- MEDDELANDEBOX -->
+        <div id="successMessage" class="toast-message"></div>
     </div>
 
     <script src="script.js"></script>
