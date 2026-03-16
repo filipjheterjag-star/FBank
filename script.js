@@ -1,631 +1,1159 @@
-// DATABASE (sparad lokalt i webbläsären)
-let users = JSON.parse(localStorage.getItem('fbankUsers')) || {};
-let currentUser = null;
-let quickBalanceUser = null;
-let stockPrices = JSON.parse(localStorage.getItem('stockPrices')) || {};
-let currentBuyStock = null;
-let currentSellStock = null;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-// SVENSKA AKTIER MED API
-const stocks = [
-    { ticker: 'AAPL', name: 'Apple Inc.', company: 'Apple' },
-    { ticker: 'MSFT', name: 'Microsoft Corp.', company: 'Microsoft' },
-    { ticker: 'GOOGL', name: 'Alphabet Inc.', company: 'Google' },
-    { ticker: 'TSLA', name: 'Tesla Inc.', company: 'Tesla' },
-    { ticker: 'NVDA', name: 'NVIDIA Corp.', company: 'NVIDIA' },
-    { ticker: 'AMZN', name: 'Amazon.com Inc.', company: 'Amazon' },
-    { ticker: 'META', name: 'Meta Platforms', company: 'Meta' },
-    { ticker: 'NFLX', name: 'Netflix Inc.', company: 'Netflix' },
-    { ticker: 'IBM', name: 'IBM Corp.', company: 'IBM' },
-    { ticker: 'INTC', name: 'Intel Corp.', company: 'Intel' }
-];
-
-// GENERA KONTONUMMER
-function generateAccountNumber() {
-    return Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// HÄMTA AKTIEPRISER
-async function fetchStockPrices() {
-    for (let stock of stocks) {
-        if (!stockPrices[stock.ticker]) {
-            // Simulera priser (i verklig app skulle man använda en API)
-            const basePrice = Math.floor(Math.random() * 300) + 50;
-            const change = (Math.random() - 0.5) * 10;
-            stockPrices[stock.ticker] = {
-                price: basePrice,
-                change: change,
-                lastUpdate: new Date().toLocaleTimeString('sv-SE')
-            };
-        }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f5f7;
+    min-height: 100vh;
+    color: #1d1d1f;
+}
+
+/* FÄRGER - SWEDBANK */
+:root {
+    --swedbank-green: #00AA44;
+    --swedbank-dark-green: #006622;
+    --swedbank-light-green: #E8F5E9;
+    --swedbank-gray: #666666;
+    --swedbank-light-gray: #F5F5F7;
+    --swedbank-dark-gray: #1d1d1f;
+    --success-color: #34C759;
+    --error-color: #FF3B30;
+    --up-color: #34C759;
+    --down-color: #FF3B30;
+}
+
+/* SKÄRMAR */
+.screen {
+    display: none;
+    width: 100%;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* LOGIN SKÄRM */
+#loginScreen {
+    min-height: 100vh;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #1a5f3f 0%, #0d3d28 100%);
+}
+
+#loginScreen.active {
+    display: flex;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 380px;
+}
+
+.login-box {
+    background: white;
+    border-radius: 20px;
+    padding: 45px 35px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    background: var(--swedbank-green);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    color: white;
+}
+
+.logo-text {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--swedbank-green);
+    letter-spacing: -0.5px;
+}
+
+.logo-small {
+    width: 40px;
+    height: 40px;
+    background: var(--swedbank-green);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+}
+
+.logo-text-small {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--swedbank-green);
+    margin-left: 8px;
+}
+
+.tagline {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 35px;
+    letter-spacing: 0.3px;
+    font-weight: 500;
+}
+
+.form-section {
+    text-align: left;
+}
+
+.form-section.hidden {
+    display: none;
+}
+
+.form-section h2 {
+    font-size: 18px;
+    margin-bottom: 22px;
+    color: var(--swedbank-dark-gray);
+    font-weight: 700;
+}
+
+.input-field {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.3s;
+    background: #f9f9f9;
+    font-family: 'Inter', sans-serif;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--swedbank-green);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(0, 170, 68, 0.08);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--swedbank-green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-primary:hover {
+    background: #00923A;
+    box-shadow: 0 8px 20px rgba(0, 170, 68, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background: #f0f0f0;
+    color: var(--swedbank-dark-gray);
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-secondary:hover {
+    background: #e8e8e8;
+    border-color: var(--swedbank-green);
+    color: var(--swedbank-green);
+}
+
+.toggle-text {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 13px;
+}
+
+.toggle-text a {
+    color: var(--swedbank-green);
+    cursor: pointer;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.toggle-text a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 13px;
+    margin-top: 15px;
+    padding: 12px 14px;
+    background: #ffebee;
+    border-radius: 10px;
+    border-left: 4px solid var(--error-color);
+    display: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* SNABBSALDO KNAPP */
+.btn-snabbsaldo {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--swedbank-green);
+    border: 2px solid var(--swedbank-green);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 18px;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-snabbsaldo:hover {
+    background: var(--swedbank-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 170, 68, 0.2);
+}
+
+/* MODAL */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal:not(.hidden) {
+    display: flex;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 45px 35px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 380px;
+    width: 90%;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-result {
+    padding: 50px 35px;
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close-modal:hover {
+    color: var(--swedbank-dark-gray);
+}
+
+.modal-title {
+    color: var(--swedbank-green);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 25px;
+    font-family: 'Inter', sans-serif;
+}
+
+.balance-result-label {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+
+.balance-result-amount {
+    color: var(--swedbank-green);
+    font-size: 52px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -1px;
+}
+
+.balance-result-time {
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 28px;
+    font-family: 'Inter', sans-serif;
+}
+
+.balance-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.shortcut-btn {
+    padding: 12px;
+    background: var(--swedbank-light-green);
+    border: 2px solid #00AA44;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--swedbank-green);
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+}
+
+.shortcut-btn:hover {
+    background: var(--swedbank-green);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* DASHBOARD */
+#dashboardScreen {
+    background: var(--swedbank-light-gray);
+    min-height: 100vh;
+    padding-bottom: 30px;
+    display: none;
+}
+
+#dashboardScreen.active {
+    display: block;
+}
+
+.header {
+    background: white;
+    padding: 16px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border-bottom: 3px solid var(--swedbank-green);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.user-name {
+    color: var(--swedbank-dark-gray);
+    font-weight: 700;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-logout {
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--swedbank-green);
+    border: 2px solid var(--swedbank-green);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-logout:hover {
+    background: var(--swedbank-green);
+    color: white;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* NAVIGATION TABS */
+.nav-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.nav-tab {
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    color: #999;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.nav-tab.active {
+    color: var(--swedbank-green);
+    border-bottom-color: var(--swedbank-green);
+}
+
+.nav-tab:hover {
+    color: var(--swedbank-green);
+}
+
+/* TAB CONTENT */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* SALDO KORT - SWEDBANK STIL */
+.balance-card {
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, #00923A 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 24px rgba(0, 170, 68, 0.25);
+}
+
+.balance-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Inter', sans-serif;
+}
+
+.balance-amount {
+    font-size: 56px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 18px;
+    letter-spacing: -1.5px;
+    font-family: 'Inter', sans-serif;
+}
+
+.account-number {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.3px;
+}
+
+/* SNABB-ÅTGÄRDER */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.action-btn {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--swedbank-dark-gray);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-family: 'Inter', sans-serif;
+}
+
+.action-btn:hover {
+    border-color: var(--swedbank-green);
+    color: var(--swedbank-green);
+    box-shadow: 0 8px 20px rgba(0, 170, 68, 0.15);
+    transform: translateY(-4px);
+}
+
+.action-btn:active {
+    transform: translateY(-1px);
+}
+
+.action-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+/* TRANSAKTIONSFORMULÄR */
+.transaction-form {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    display: none;
+}
+
+.transaction-form.hidden {
+    display: none;
+}
+
+.transaction-form:not(.hidden) {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+.transaction-form h3 {
+    margin-bottom: 22px;
+    color: var(--swedbank-dark-gray);
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+
+textarea.input-field {
+    resize: vertical;
+    min-height: 100px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* TRANSAKTIONSHISTORIK */
+.transaction-section {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    display: none;
+}
+
+.transaction-section.hidden {
+    display: none;
+}
+
+.transaction-section:not(.hidden) {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+.transaction-section h3 {
+    margin-bottom: 22px;
+    color: var(--swedbank-dark-gray);
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+
+.transaction-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.transaction-item:hover {
+    background: #f9f9f9;
+    padding: 16px 12px;
+    border-radius: 8px;
+    margin: 0 -12px;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-info {
+    flex: 1;
+}
+
+.transaction-type {
+    font-weight: 700;
+    color: var(--swedbank-dark-gray);
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+
+.transaction-date {
+    font-size: 12px;
+    color: #999;
+    font-family: 'Inter', sans-serif;
+}
+
+.transaction-amount {
+    font-size: 16px;
+    font-weight: 700;
+    text-align: right;
+    margin-left: 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.transaction-amount.income {
+    color: var(--success-color);
+}
+
+.transaction-amount.expense {
+    color: var(--swedbank-dark-gray);
+}
+
+/* AKTIEDEPÅ SEKTION */
+.stocks-header {
+    margin-bottom: 30px;
+}
+
+.stocks-header h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--swedbank-dark-gray);
+    margin-bottom: 8px;
+}
+
+.stocks-info {
+    color: #999;
+    font-size: 13px;
+}
+
+.stocks-section {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    margin-bottom: 30px;
+}
+
+.stocks-section h3 {
+    margin-bottom: 22px;
+    color: var(--swedbank-dark-gray);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.stocks-list {
+    display: grid;
+    gap: 16px;
+}
+
+.stock-card {
+    background: #f9f9f9;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.stock-card:hover {
+    border-color: var(--swedbank-green);
+    box-shadow: 0 4px 12px rgba(0, 170, 68, 0.1);
+}
+
+.stock-info {
+    flex: 1;
+}
+
+.stock-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--swedbank-dark-gray);
+    margin-bottom: 6px;
+}
+
+.stock-ticker {
+    font-size: 12px;
+    color: #999;
+}
+
+.stock-price-section {
+    text-align: right;
+    margin-right: 20px;
+}
+
+.stock-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--swedbank-dark-gray);
+}
+
+.stock-change {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.stock-change.up {
+    color: var(--up-color);
+}
+
+.stock-change.down {
+    color: var(--down-color);
+}
+
+.stock-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.stock-action-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-buy {
+    background: var(--swedbank-green);
+    color: white;
+}
+
+.btn-buy:hover {
+    background: #00923A;
+    transform: translateY(-2px);
+}
+
+.btn-sell {
+    background: #f0f0f0;
+    color: var(--swedbank-dark-gray);
+    border: 1px solid #e0e0e0;
+}
+
+.btn-sell:hover {
+    background: #e0e0e0;
+}
+
+/* PORTFÖLJÖ */
+.portfolio-section {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    margin-bottom: 30px;
+    display: none;
+}
+
+.portfolio-section.show {
+    display: block;
+}
+
+.portfolio-section h3 {
+    margin-bottom: 22px;
+    color: var(--swedbank-dark-gray);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.portfolio-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.portfolio-stat {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+.portfolio-stat-label {
+    font-size: 12px;
+    color: #999;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.portfolio-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--swedbank-dark-gray);
+}
+
+.portfolio-stat-value.positive {
+    color: var(--up-color);
+}
+
+.portfolio-stat-value.negative {
+    color: var(--down-color);
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 28px;
+}
+
+.portfolio-list {
+    display: grid;
+    gap: 14px;
+}
+
+.portfolio-item {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.portfolio-info {
+    flex: 1;
+}
+
+.portfolio-name {
+    font-weight: 700;
+    color: var(--swedbank-dark-gray);
+    margin-bottom: 4px;
+}
+
+.portfolio-qty {
+    font-size: 12px;
+    color: #999;
+}
+
+.portfolio-value {
+    text-align: right;
+}
+
+.portfolio-value-text {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--swedbank-dark-gray);
+}
+
+.portfolio-gain {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.portfolio-gain.positive {
+    color: var(--success-color);
+}
+
+.portfolio-gain.negative {
+    color: var(--error-color);
+}
+
+/* STOCK INPUT GROUP */
+.stock-input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.stock-input-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: var(--swedbank-dark-gray);
+}
+
+.stock-price-modal {
+    font-size: 16px;
+    font-weight: 700;
+    color: #999;
+    margin-bottom: 20px;
+}
+
+.stock-total {
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--swedbank-green);
+    margin-bottom: 20px;
+}
+
+.stock-gain-info {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.stock-gain-info.positive {
+    color: var(--up-color);
+    background: rgba(52, 199, 89, 0.1);
+}
+
+.stock-gain-info.negative {
+    color: var(--down-color);
+    background: rgba(255, 59, 48, 0.1);
+}
+
+/* MEDDELANDEN */
+.success-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--success-color);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 10px;
+    display: none;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-in-out;
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: 0 8px 20px rgba(52, 199, 89, 0.3);
+    font-family: 'Inter', sans-serif;
+}
+
+.success-message.show {
+    display: block;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
     }
-    localStorage.setItem('stockPrices', JSON.stringify(stockPrices));
-}
-
-// UPPDATERA AKTIEPRISER (simulerar marknadsförändringar)
-function updateStockPrices() {
-    for (let stock of stocks) {
-        if (stockPrices[stock.ticker]) {
-            const change = (Math.random() - 0.5) * 2;
-            stockPrices[stock.ticker].price += change;
-            stockPrices[stock.ticker].price = Math.max(stockPrices[stock.ticker].price, 10);
-            stockPrices[stock.ticker].change = change;
-            stockPrices[stock.ticker].lastUpdate = new Date().toLocaleTimeString('sv-SE');
-        }
-    }
-    localStorage.setItem('stockPrices', JSON.stringify(stockPrices));
-}
-
-// === SNABBSALDO FUNKTIONER ===
-function showQuickBalanceModal() {
-    document.getElementById('quickBalanceModal').classList.remove('hidden');
-    document.getElementById('quickBalanceUsername').value = '';
-    document.getElementById('quickBalanceUsername').focus();
-}
-
-function closeQuickBalanceModal() {
-    document.getElementById('quickBalanceModal').classList.add('hidden');
-}
-
-function closeQuickBalanceResultModal() {
-    document.getElementById('quickBalanceResultModal').classList.add('hidden');
-}
-
-function showQuickBalance() {
-    const username = document.getElementById('quickBalanceUsername').value.trim();
-    
-    if (!username) {
-        alert('Ange ett användarnamn');
-        return;
-    }
-    
-    if (!users[username]) {
-        alert('Användaren finns inte');
-        return;
-    }
-    
-    quickBalanceUser = username;
-    document.getElementById('quickBalanceAmount').textContent = users[username].balance.toLocaleString('sv-SE') + ' kr';
-    document.getElementById('quickBalanceTime').textContent = 'Uppdaterat just nu';
-    
-    document.getElementById('quickBalanceModal').classList.add('hidden');
-    document.getElementById('quickBalanceResultModal').classList.remove('hidden');
-}
-
-function addQuickBalance(amount) {
-    if (quickBalanceUser) {
-        users[quickBalanceUser].balance += amount;
-        localStorage.setItem('fbankUsers', JSON.stringify(users));
-        document.getElementById('quickBalanceAmount').textContent = users[quickBalanceUser].balance.toLocaleString('sv-SE') + ' kr';
-        showSuccess('+' + amount + ' kr lagts till');
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-// REGISTRERA NYT KONTO
-function register() {
-    const username = document.getElementById('regUsername').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const password2 = document.getElementById('regPassword2').value;
-
-    if (!username || !email || !password || !password2) {
-        showError('Alla fält måste fyllas i');
-        return;
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
     }
-
-    if (password !== password2) {
-        showError('Lösenorden matchar inte');
-        return;
-    }
-
-    if (password.length < 4) {
-        showError('Lösenordet måste vara minst 4 tecken');
-        return;
-    }
-
-    if (users[username]) {
-        showError('Användarnamnet finns redan');
-        return;
-    }
-
-    users[username] = {
-        email: email,
-        password: password,
-        balance: 10000,
-        accountNumber: generateAccountNumber(),
-        transactions: [],
-        stocks: {}
-    };
-
-    localStorage.setItem('fbankUsers', JSON.stringify(users));
-    showError('');
-    alert('Konto skapat! Du kan nu logga in.');
-    toggleForms();
-    
-    document.getElementById('regUsername').value = '';
-    document.getElementById('regEmail').value = '';
-    document.getElementById('regPassword').value = '';
-    document.getElementById('regPassword2').value = '';
-}
-
-// LOGGA IN
-function login() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    if (!username || !password) {
-        showError('Ange användarnamn och lösenord');
-        return;
-    }
-
-    if (!users[username] || users[username].password !== password) {
-        showError('Felaktigt användarnamn eller lösenord');
-        return;
-    }
-
-    currentUser = username;
-    quickBalanceUser = null;
-    showError('');
-    switchScreen('dashboardScreen');
-    updateDashboard();
-    fetchStockPrices();
-    displayStocks();
-}
-
-// LOGGA UT
-function logout() {
-    currentUser = null;
-    quickBalanceUser = null;
-    switchScreen('loginScreen');
-    document.getElementById('loginUsername').value = '';
-    document.getElementById('loginPassword').value = '';
-    closeQuickBalanceModal();
-    closeQuickBalanceResultModal();
-}
-
-// BYTA MELLAN LOGIN OCH REGISTRERA
-function toggleForms() {
-    document.getElementById('loginForm').classList.toggle('hidden');
-    document.getElementById('registerForm').classList.toggle('hidden');
-}
-
-// BYTA SKÄRM
-function switchScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
-}
-
-// BYTA TAB
-function switchTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    
-    document.getElementById(tabName + 'Tab').classList.add('active');
-    event.target.classList.add('active');
-    
-    if (tabName === 'aktier') {
-        updateStockPrices();
-        displayStocks();
+    to {
+        transform: translateX(0);
+        opacity: 1;
     }
 }
 
-// UPPDATERA DASHBOARD
-function updateDashboard() {
-    const user = users[currentUser];
-    document.getElementById('userGreeting').textContent = `Hej, ${currentUser}!`;
-    document.getElementById('balanceDisplay').textContent = user.balance.toLocaleString('sv-SE') + ' kr';
-    document.getElementById('accountNumber').textContent = 'Kontonummer: ' + user.accountNumber;
-    updateTransactionList();
-}
-
-// VISA AKTIER
-function displayStocks() {
-    const list = document.getElementById('stocksList');
-    const user = users[currentUser];
-    
-    list.innerHTML = stocks.map(stock => {
-        const price = stockPrices[stock.ticker] || { price: 0, change: 0 };
-        const changeClass = price.change >= 0 ? 'up' : 'down';
-        const changeSymbol = price.change >= 0 ? '▲' : '▼';
-        const userOwns = user.stocks && user.stocks[stock.ticker] ? user.stocks[stock.ticker] : 0;
-        
-        return `
-            <div class="stock-card">
-                <div class="stock-info">
-                    <div class="stock-name">${stock.name}</div>
-                    <div class="stock-ticker">${stock.ticker} ${userOwns > 0 ? `| Du äger: ${userOwns} st` : ''}</div>
-                </div>
-                <div class="stock-price-section">
-                    <div class="stock-price">${price.price.toFixed(2)} kr</div>
-                    <div class="stock-change ${changeClass}">${changeSymbol} ${Math.abs(price.change).toFixed(2)} kr</div>
-                </div>
-                <div class="stock-actions">
-                    <button class="stock-action-btn btn-buy" onclick="openBuyStockModal('${stock.ticker}', '${stock.name}', ${price.price})">Köp</button>
-                    ${userOwns > 0 ? `<button class="stock-action-btn btn-sell" onclick="openSellStockModal('${stock.ticker}', '${stock.name}', ${price.price})">Sälja</button>` : ''}
-                </div>
-            </div>
-        `;
-    }).join('');
-    
-    displayPortfolio();
-}
-
-// VISA PORTFÖLJÖ
-function displayPortfolio() {
-    const user = users[currentUser];
-    const portfolioSection = document.getElementById('portfolioSection');
-    const portfolioList = document.getElementById('portfolioList');
-    
-    if (!user.stocks || Object.keys(user.stocks).length === 0) {
-        portfolioSection.classList.remove('show');
-        return;
-    }
-    
-    portfolioSection.classList.add('show');
-    let totalValue = 0;
-    let totalGain = 0;
-    
-    let html = '';
-    for (let ticker in user.stocks) {
-        const qty = user.stocks[ticker].quantity;
-        const buyPrice = user.stocks[ticker].avgPrice;
-        const currentPrice = stockPrices[ticker]?.price || buyPrice;
-        const value = qty * currentPrice;
-        const gain = value - (qty * buyPrice);
-        const gainClass = gain >= 0 ? 'positive' : 'negative';
-        
-        totalValue += value;
-        totalGain += gain;
-        
-        const stock = stocks.find(s => s.ticker === ticker);
-        
-        html += `
-            <div class="portfolio-item">
-                <div class="portfolio-info">
-                    <div class="portfolio-name">${stock.name}</div>
-                    <div class="portfolio-qty">${qty} aktier @ ${buyPrice.toFixed(2)} kr</div>
-                </div>
-                <div class="portfolio-value">
-                    <div class="portfolio-value-text">${value.toFixed(2)} kr</div>
-                    <div class="portfolio-gain ${gainClass}">${gain >= 0 ? '+' : ''}${gain.toFixed(2)} kr</div>
-                </div>
-            </div>
-        `;
-    }
-    
-    portfolioList.innerHTML = html;
-}
-
-// KÖP AKTIE MODAL
-function openBuyStockModal(ticker, name, price) {
-    currentBuyStock = { ticker, name, price };
-    document.getElementById('buyStockTitle').textContent = `Köp ${name}`;
-    document.getElementById('buyStockPrice').textContent = `Pris: ${price.toFixed(2)} kr per aktie`;
-    document.getElementById('buyStockQty').value = '1';
-    updateBuyTotal();
-    document.getElementById('buyStockModal').classList.remove('hidden');
-}
-
-function closeBuyStockModal() {
-    document.getElementById('buyStockModal').classList.add('hidden');
-}
-
-function updateBuyTotal() {
-    const qty = parseInt(document.getElementById('buyStockQty').value) || 0;
-    const total = qty * currentBuyStock.price;
-    document.getElementById('buyStockTotal').textContent = `Totalt: ${total.toFixed(2)} kr`;
-}
-
-function confirmBuyStock() {
-    const qty = parseInt(document.getElementById('buyStockQty').value);
-    const user = users[currentUser];
-    const total = qty * currentBuyStock.price;
-    
-    if (qty <= 0) {
-        alert('Ange en giltig mängd');
-        return;
-    }
-    
-    if (user.balance < total) {
-        alert('Du har inte tillräckligt med pengar');
-        return;
-    }
-    
-    user.balance -= total;
-    
-    if (!user.stocks) user.stocks = {};
-    if (!user.stocks[currentBuyStock.ticker]) {
-        user.stocks[currentBuyStock.ticker] = { quantity: 0, avgPrice: 0 };
-    }
-    
-    const oldQty = user.stocks[currentBuyStock.ticker].quantity;
-    const oldCost = oldQty * user.stocks[currentBuyStock.ticker].avgPrice;
-    const newQty = oldQty + qty;
-    const newAvgPrice = (oldCost + total) / newQty;
-    
-    user.stocks[currentBuyStock.ticker].quantity = newQty;
-    user.stocks[currentBuyStock.ticker].avgPrice = newAvgPrice;
-    
-    const timestamp = new Date().toLocaleString('sv-SE');
-    user.transactions.push({
-        type: `Köpt ${qty} st ${currentBuyStock.name}`,
-        amount: -total,
-        timestamp: timestamp,
-        message: ''
-    });
-    
-    localStorage.setItem('fbankUsers', JSON.stringify(users));
-    closeBuyStockModal();
-    showSuccess(`Köpte ${qty} st ${currentBuyStock.name}`);
-    displayStocks();
-    updateDashboard();
-}
-
-// SÄLJA AKTIE MODAL
-function openSellStockModal(ticker, name, price) {
-    const user = users[currentUser];
-    const owned = user.stocks[ticker].quantity;
-    
-    currentSellStock = { ticker, name, price, maxQty: owned };
-    document.getElementById('sellStockTitle').textContent = `Sälja ${name}`;
-    document.getElementById('sellStockPrice').textContent = `Pris: ${price.toFixed(2)} kr per aktie (Du äger: ${owned} st)`;
-    document.getElementById('sellStockQty').value = '1';
-    document.getElementById('sellStockQty').max = owned;
-    updateSellTotal();
-    document.getElementById('sellStockModal').classList.remove('hidden');
-}
-
-function closeSellStockModal() {
-    document.getElementById('sellStockModal').classList.add('hidden');
-}
-
-function updateSellTotal() {
-    const qty = parseInt(document.getElementById('sellStockQty').value) || 0;
-    const total = qty * currentSellStock.price;
-    document.getElementById('sellStockTotal').textContent = `Får: ${total.toFixed(2)} kr`;
-}
-
-function confirmSellStock() {
-    const qty = parseInt(document.getElementById('sellStockQty').value);
-    const user = users[currentUser];
-    const total = qty * currentSellStock.price;
-    
-    if (qty <= 0) {
-        alert('Ange en giltig mängd');
-        return;
-    }
-    
-    if (qty > currentSellStock.maxQty) {
-        alert('Du kan inte sälja mer än du äger');
-        return;
-    }
-    
-    user.balance += total;
-    user.stocks[currentSellStock.ticker].quantity -= qty;
-    
-    if (user.stocks[currentSellStock.ticker].quantity === 0) {
-        delete user.stocks[currentSellStock.ticker];
-    }
-    
-    const timestamp = new Date().toLocaleString('sv-SE');
-    user.transactions.push({
-        type: `Såld ${qty} st ${currentSellStock.name}`,
-        amount: total,
-        timestamp: timestamp,
-        message: ''
-    });
-    
-    localStorage.setItem('fbankUsers', JSON.stringify(users));
-    closeSellStockModal();
-    showSuccess(`Sålde ${qty} st ${currentSellStock.name}`);
-    displayStocks();
-    updateDashboard();
-}
-
-// VISA ÖVERFÖRINGSFORMULÄR
-function showTransferForm() {
-    closeAllForms();
-    document.getElementById('transferForm').classList.remove('hidden');
-}
-
-// VISA INSÄTTNINGSFORMULÄR
-function showDepositForm() {
-    closeAllForms();
-    document.getElementById('depositForm').classList.remove('hidden');
-}
-
-// VISA UTTAGSFORMULÄR
-function showWithdrawForm() {
-    closeAllForms();
-    document.getElementById('withdrawForm').classList.remove('hidden');
-}
-
-// VISA TRANSAKTIONSHISTORIK
-function showTransactionHistory() {
-    closeAllForms();
-    document.getElementById('transactionHistory').classList.remove('hidden');
-}
-
-// STÄNG FORMULÄR
-function closeForm() {
-    closeAllForms();
-}
-
-function closeAllForms() {
-    document.getElementById('transferForm').classList.add('hidden');
-    document.getElementById('depositForm').classList.add('hidden');
-    document.getElementById('withdrawForm').classList.add('hidden');
-    document.getElementById('transactionHistory').classList.add('hidden');
-}
-
-// ÖVERFÖR PENGAR
-function transferMoney() {
-    const recipient = document.getElementById('recipientUsername').value.trim();
-    const amount = parseFloat(document.getElementById('transferAmount').value);
-    const message = document.getElementById('transferMessage').value;
-    const user = users[currentUser];
-
-    if (!recipient || !amount) {
-        alert('Ange mottagare och belopp');
-        return;
+/* RESPONSIV DESIGN */
+@media (max-width: 768px) {
+    .login-box {
+        padding: 35px 25px;
     }
 
-    if (!users[recipient]) {
-        alert('Mottagaren finns inte');
-        return;
+    .balance-amount {
+        font-size: 44px;
     }
 
-    if (amount <= 0) {
-        alert('Beloppet måste vara större än 0');
-        return;
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    if (user.balance < amount) {
-        alert('Du har inte tillräckligt med pengar');
-        return;
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 14px 20px;
     }
 
-    user.balance -= amount;
-    users[recipient].balance += amount;
-
-    const timestamp = new Date().toLocaleString('sv-SE');
-    user.transactions.push({
-        type: 'Överföring till ' + recipient,
-        amount: -amount,
-        timestamp: timestamp,
-        message: message
-    });
-
-    users[recipient].transactions.push({
-        type: 'Överföring från ' + currentUser,
-        amount: amount,
-        timestamp: timestamp,
-        message: message
-    });
-
-    localStorage.setItem('fbankUsers', JSON.stringify(users));
-    
-    showSuccess('Pengar överförda! ' + amount + ' kr skickades till ' + recipient);
-    document.getElementById('recipientUsername').value = '';
-    document.getElementById('transferAmount').value = '';
-    document.getElementById('transferMessage').value = '';
-    
-    closeAllForms();
-    updateDashboard();
-}
-
-// SÄTT IN PENGAR
-function depositMoney() {
-    const amount = parseFloat(document.getElementById('depositAmount').value);
-    const user = users[currentUser];
-
-    if (!amount || amount <= 0) {
-        alert('Ange ett giltigt belopp');
-        return;
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+        gap: 15px;
     }
 
-    user.balance += amount;
-    const timestamp = new Date().toLocaleString('sv-SE');
-    user.transactions.push({
-        type: 'Insättning',
-        amount: amount,
-        timestamp: timestamp,
-        message: ''
-    });
-
-    localStorage.setItem('fbankUsers', JSON.stringify(users));
-    
-    showSuccess('+' + amount + ' kr sattes in');
-    document.getElementById('depositAmount').value = '';
-    
-    closeAllForms();
-    updateDashboard();
-}
-
-// TA UT PENGAR
-function withdrawMoney() {
-    const amount = parseFloat(document.getElementById('withdrawAmount').value);
-    const user = users[currentUser];
-
-    if (!amount || amount <= 0) {
-        alert('Ange ett giltigt belopp');
-        return;
+    .dashboard-container {
+        padding: 20px 15px;
     }
 
-    if (user.balance < amount) {
-        alert('Du har inte tillräckligt med pengar');
-        return;
+    .balance-card {
+        padding: 30px 25px;
     }
 
-    user.balance -= amount;
-    const timestamp = new Date().toLocaleString('sv-SE');
-    user.transactions.push({
-        type: 'Uttag',
-        amount: -amount,
-        timestamp: timestamp,
-        message: ''
-    });
-
-    localStorage.setItem('fbankUsers', JSON.stringify(users));
-    
-    showSuccess('-' + amount + ' kr togs ut');
-    document.getElementById('withdrawAmount').value = '';
-    
-    closeAllForms();
-    updateDashboard();
-}
-
-// UPPDATERA TRANSAKTIONSLISTA
-function updateTransactionList() {
-    const user = users[currentUser];
-    const list = document.getElementById('transactionList');
-    
-    if (!user.transactions || user.transactions.length === 0) {
-        list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Inga transaktioner än</p>';
-        return;
+    .transaction-form {
+        padding: 25px 20px;
     }
 
-    list.innerHTML = user.transactions.reverse().map((trans, index) => {
-        const isIncome = trans.amount > 0;
-        return `
-            <div class="transaction-item">
-                <div class="transaction-info">
-                    <div class="transaction-type">${trans.type}</div>
-                    <div class="transaction-date">${trans.timestamp}</div>
-                    ${trans.message ? '<div class="transaction-date">' + trans.message + '</div>' : ''}
-                </div>
-                <div class="transaction-amount ${isIncome ? 'income' : 'expense'}">
-                    ${isIncome ? '+' : ''} ${trans.amount.toLocaleString('sv-SE')} kr
-                </div>
-            </div>
-        `;
-    }).join('');
-}
+    .transaction-section {
+        padding: 25px 20px;
+    }
 
-// VISA FELMEDDELANDE
-function showError(message) {
-    const errorDiv = document.getElementById('errorMessage');
-    if (message) {
-        errorDiv.textContent = message;
-        errorDiv.classList.add('show');
-    } else {
-        errorDiv.classList.remove('show');
+    .success-message {
+        left: 10px;
+        right: 10px;
+    }
+
+    .modal-content {
+        max-width: 90%;
+        padding: 40px 25px;
+    }
+
+    .stock-card {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .stock-price-section {
+        width: 100%;
+        text-align: left;
+        margin-right: 0;
+        margin-bottom: 12px;
+    }
+
+    .stock-actions {
+        width: 100%;
+    }
+
+    .stock-action-btn {
+        flex: 1;
+    }
+
+    .portfolio-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chart-container {
+        height: 250px;
     }
 }
 
-// VISA FRAMGÅNGSMEDDELANDE
-function showSuccess(message) {
-    const successDiv = document.getElementById('successMessage');
-    successDiv.textContent = message;
-    successDiv.classList.add('show');
-    
-    setTimeout(() => {
-        successDiv.classList.remove('show');
-    }, 3000);
-}
+@media (max-width: 480px) {
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
 
-// Uppdatera köp/säljformulär dynamiskt
-document.addEventListener('input', function(e) {
-    if (e.target.id === 'buyStockQty') updateBuyTotal();
-    if (e.target.id === 'sellStockQty') updateSellTotal();
-});
+    .balance-amount {
+        font-size: 38px;
+    }
+
+    .action-btn {
+        padding: 20px 12px;
+    }
+
+    .action-icon {
+        font-size: 28px;
+    }
+
+    .balance-result-amount {
+        font-size: 42px;
+    }
+
+    .logo-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-content {
+        padding: 35px 20px;
+    }
+
+    .nav-tabs {
+        flex-wrap: wrap;
+    }
+
+    .nav-tab {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+
+    .portfolio-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 200px;
+    }
+}
