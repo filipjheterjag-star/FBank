@@ -38,11 +38,9 @@
 
                 <div id="errorMessage" class="error-message"></div>
                 
-                <!-- SNABBSALDO KNAPP -->
                 <button onclick="showQuickBalanceModal()" class="btn-secondary">Se Snabbsaldo</button>
             </div>
 
-            <!-- SNABBSALDO MODAL -->
             <div id="quickBalanceModal" class="modal hidden">
                 <div class="modal-overlay" onclick="closeQuickBalanceModal()"></div>
                 <div class="modal-content">
@@ -53,7 +51,6 @@
                 </div>
             </div>
 
-            <!-- SNABBSALDO RESULTAT MODAL -->
             <div id="quickBalanceResultModal" class="modal hidden">
                 <div class="modal-overlay" onclick="closeQuickBalanceResultModal()"></div>
                 <div class="modal-content">
@@ -81,8 +78,13 @@
                 <div class="logo-small">F</div>
                 <span class="logo-text-small">FBank</span>
                 <span id="userGreeting" class="user-greeting"></span>
+                <span id="dailyBonus" class="daily-bonus"></span>
             </div>
-            <button onclick="logout()" class="btn-logout">Logga Ut</button>
+            <div class="header-actions">
+                <button onclick="toggleDarkMode()" class="btn-icon" title="Byt tema">🌙</button>
+                <button onclick="showSettings()" class="btn-icon" title="Inställningar">⚙️</button>
+                <button onclick="logout()" class="btn-logout">Logga Ut</button>
+            </div>
         </div>
 
         <div class="main-content">
@@ -90,11 +92,13 @@
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="switchTab('konto')">Konto</button>
                 <button class="nav-tab" onclick="switchTab('aktier')">Aktiedepå</button>
+                <button class="nav-tab" onclick="switchTab('sparmal')">Sparmål</button>
+                <button class="nav-tab" onclick="switchTab('budget')">Budget</button>
+                <button class="nav-tab" onclick="switchTab('profil')">Profil</button>
             </div>
 
             <!-- KONTO TAB -->
             <div id="kontoTab" class="tab-content active">
-                <!-- SALDO KORT -->
                 <div class="balance-card">
                     <div class="balance-inner">
                         <p class="balance-label">Totalt Saldo</p>
@@ -103,7 +107,6 @@
                     </div>
                 </div>
 
-                <!-- SNABB-ÅTGÄRDER -->
                 <div class="actions-grid">
                     <button class="action-card" onclick="showTransferForm()">
                         <div class="action-icon">💸</div>
@@ -121,9 +124,16 @@
                         <div class="action-icon">📜</div>
                         <p>Historik</p>
                     </button>
+                    <button class="action-card" onclick="showFriendsModal()">
+                        <div class="action-icon">👥</div>
+                        <p>Vänner</p>
+                    </button>
+                    <button class="action-card" onclick="showRecurringForm()">
+                        <div class="action-icon">🔄</div>
+                        <p>Återkurrande</p>
+                    </button>
                 </div>
 
-                <!-- TRANSAKTIONSFORMULÄR -->
                 <div id="transferForm" class="form-card hidden">
                     <h3>Överför Pengar</h3>
                     <input type="text" id="recipientUsername" placeholder="Mottagares användarnamn" class="input-field">
@@ -153,11 +163,36 @@
                     </div>
                 </div>
 
-                <!-- TRANSAKTIONSHISTORIK -->
+                <div id="recurringForm" class="form-card hidden">
+                    <h3>Återkurrande Överföring</h3>
+                    <input type="text" id="recurringRecipient" placeholder="Mottagare" class="input-field">
+                    <input type="number" id="recurringAmount" placeholder="Belopp (kr)" class="input-field" min="1">
+                    <select id="recurringFrequency" class="input-field">
+                        <option value="weekly">Veckovis</option>
+                        <option value="monthly">Månatlig</option>
+                    </select>
+                    <div class="button-group">
+                        <button onclick="addRecurringTransfer()" class="btn-primary">Lägg Till</button>
+                        <button onclick="closeForm()" class="btn-secondary">Avbryt</button>
+                    </div>
+                    <div id="recurringList" class="recurring-list"></div>
+                </div>
+
                 <div id="transactionHistory" class="form-card hidden">
                     <h3>Transaktionshistorik</h3>
                     <div id="transactionList" class="transaction-list"></div>
                     <button onclick="closeForm()" class="btn-secondary">Stäng</button>
+                </div>
+
+                <div id="friendsModal" class="modal hidden">
+                    <div class="modal-overlay" onclick="closeFriendsModal()"></div>
+                    <div class="modal-content">
+                        <button onclick="closeFriendsModal()" class="btn-close">✕</button>
+                        <h2 class="modal-title">Mina Vänner</h2>
+                        <input type="text" id="addFriendUsername" placeholder="Användarnamn" class="input-field">
+                        <button onclick="addFriend()" class="btn-primary">Lägg Till Vän</button>
+                        <div id="friendsList" class="friends-list"></div>
+                    </div>
                 </div>
             </div>
 
@@ -167,7 +202,6 @@
                     <h2>Aktiedepå</h2>
                 </div>
 
-                <!-- PORTFÖLJÖ MED GRAF -->
                 <div class="portfolio-card hidden" id="portfolioSection">
                     <h3>Min Portfölj</h3>
                     <div id="portfolioStats" class="portfolio-stats"></div>
@@ -177,13 +211,11 @@
                     <div id="portfolioList" class="portfolio-list"></div>
                 </div>
 
-                <!-- TILLGÄNGLIGA AKTIER -->
                 <div class="form-card">
                     <h3>Tillgängliga Aktier</h3>
                     <div id="stocksList" class="stocks-list"></div>
                 </div>
 
-                <!-- KÖP AKTIE MODAL -->
                 <div id="buyStockModal" class="modal hidden">
                     <div class="modal-overlay" onclick="closeBuyStockModal()"></div>
                     <div class="modal-content">
@@ -202,7 +234,6 @@
                     </div>
                 </div>
 
-                <!-- SÄLJA AKTIE MODAL -->
                 <div id="sellStockModal" class="modal hidden">
                     <div class="modal-overlay" onclick="closeSellStockModal()"></div>
                     <div class="modal-content">
@@ -222,10 +253,122 @@
                     </div>
                 </div>
             </div>
+
+            <!-- SPARMÅL TAB -->
+            <div id="sparmalTab" class="tab-content">
+                <div class="stocks-header">
+                    <h2>Sparmål</h2>
+                </div>
+
+                <div class="form-card">
+                    <h3>Skapa Nytt Sparmål</h3>
+                    <input type="text" id="goalName" placeholder="Mål namn (ex: Semester)" class="input-field">
+                    <input type="number" id="goalAmount" placeholder="Målbelopp (kr)" class="input-field" min="1">
+                    <input type="number" id="goalCurrent" placeholder="Nuvarande belopp (kr)" class="input-field" min="0">
+                    <div class="button-group">
+                        <button onclick="createGoal()" class="btn-primary">Skapa Mål</button>
+                    </div>
+                </div>
+
+                <div id="goalsList" class="goals-list"></div>
+            </div>
+
+            <!-- BUDGET TAB -->
+            <div id="budgetTab" class="tab-content">
+                <div class="stocks-header">
+                    <h2>Budget & Analys</h2>
+                </div>
+
+                <div class="form-card">
+                    <h3>Månatlig Budget</h3>
+                    <input type="number" id="budgetLimit" placeholder="Månatlig gräns (kr)" class="input-field" min="1">
+                    <input type="number" id="transactionLimit" placeholder="Max per transaktion (kr)" class="input-field" min="1">
+                    <div class="button-group">
+                        <button onclick="setBudget()" class="btn-primary">Spara Budget</button>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3>Denna Månad</h3>
+                    <div id="budgetStats" class="budget-stats"></div>
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3>Månatlig Rapport</h3>
+                    <div id="monthlyReport" class="monthly-report"></div>
+                    <button onclick="downloadReport()" class="btn-primary">Ladda Ner Rapport</button>
+                </div>
+            </div>
+
+            <!-- PROFIL TAB -->
+            <div id="profilTab" class="tab-content">
+                <div class="profile-section">
+                    <h2>Min Profil</h2>
+                    
+                    <div class="profile-card">
+                        <div class="avatar-section">
+                            <div id="userAvatar" class="user-avatar">👤</div>
+                            <input type="text" id="avatarEmoji" placeholder="Emoji (ex: 🎮)" class="input-field" maxlength="2">
+                            <button onclick="updateAvatar()" class="btn-primary">Uppdatera Avatar</button>
+                        </div>
+
+                        <div class="profile-info">
+                            <p><strong>Användarnamn:</strong> <span id="profileUsername"></span></p>
+                            <p><strong>E-post:</strong> <span id="profileEmail"></span></p>
+                            <p><strong>Konton:</strong> <span id="profileAccounts"></span></p>
+                        </div>
+                    </div>
+
+                    <div class="achievements-section">
+                        <h3>Achievements 🏆</h3>
+                        <div id="achievementsList" class="achievements-list"></div>
+                    </div>
+
+                    <div class="leaderboard-section">
+                        <h3>Leaderboard 🏅</h3>
+                        <div id="leaderboardList" class="leaderboard-list"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- MEDDELANDEBOX -->
         <div id="successMessage" class="toast-message"></div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeSettings()"></div>
+        <div class="modal-content">
+            <button onclick="closeSettings()" class="btn-close">✕</button>
+            <h2 class="modal-title">Inställningar</h2>
+            
+            <div class="settings-group">
+                <label>Språk:</label>
+                <select id="languageSetting" class="input-field">
+                    <option value="sv">Svenska</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label>Valuta:</label>
+                <select id="currencySetting" class="input-field">
+                    <option value="SEK">SEK (kr)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="USD">USD ($)</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label>Notifikationer:</label>
+                <input type="checkbox" id="notificationsSetting" checked> Aktivera notifikationer
+            </div>
+
+            <button onclick="saveSettings()" class="btn-primary">Spara Inställningar</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
