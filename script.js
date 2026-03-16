@@ -1,11 +1,59 @@
-// DATABASE (sparad lokalt i webbläsaren)
+// DATABASE (sparad lokalt i webbläsären)
 let users = JSON.parse(localStorage.getItem('fbankUsers')) || {};
 let currentUser = null;
 let quickBalanceUser = null;
+let stockPrices = JSON.parse(localStorage.getItem('stockPrices')) || {};
+let currentBuyStock = null;
+let currentSellStock = null;
+
+// SVENSKA AKTIER MED API
+const stocks = [
+    { ticker: 'AAPL', name: 'Apple Inc.', company: 'Apple' },
+    { ticker: 'MSFT', name: 'Microsoft Corp.', company: 'Microsoft' },
+    { ticker: 'GOOGL', name: 'Alphabet Inc.', company: 'Google' },
+    { ticker: 'TSLA', name: 'Tesla Inc.', company: 'Tesla' },
+    { ticker: 'NVDA', name: 'NVIDIA Corp.', company: 'NVIDIA' },
+    { ticker: 'AMZN', name: 'Amazon.com Inc.', company: 'Amazon' },
+    { ticker: 'META', name: 'Meta Platforms', company: 'Meta' },
+    { ticker: 'NFLX', name: 'Netflix Inc.', company: 'Netflix' },
+    { ticker: 'IBM', name: 'IBM Corp.', company: 'IBM' },
+    { ticker: 'INTC', name: 'Intel Corp.', company: 'Intel' }
+];
 
 // GENERA KONTONUMMER
 function generateAccountNumber() {
     return Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
+}
+
+// HÄMTA AKTIEPRISER
+async function fetchStockPrices() {
+    for (let stock of stocks) {
+        if (!stockPrices[stock.ticker]) {
+            // Simulera priser (i verklig app skulle man använda en API)
+            const basePrice = Math.floor(Math.random() * 300) + 50;
+            const change = (Math.random() - 0.5) * 10;
+            stockPrices[stock.ticker] = {
+                price: basePrice,
+                change: change,
+                lastUpdate: new Date().toLocaleTimeString('sv-SE')
+            };
+        }
+    }
+    localStorage.setItem('stockPrices', JSON.stringify(stockPrices));
+}
+
+// UPPDATERA AKTIEPRISER (simulerar marknadsförändringar)
+function updateStockPrices() {
+    for (let stock of stocks) {
+        if (stockPrices[stock.ticker]) {
+            const change = (Math.random() - 0.5) * 2;
+            stockPrices[stock.ticker].price += change;
+            stockPrices[stock.ticker].price = Math.max(stockPrices[stock.ticker].price, 10);
+            stockPrices[stock.ticker].change = change;
+            stockPrices[stock.ticker].lastUpdate = new Date().toLocaleTimeString('sv-SE');
+        }
+    }
+    localStorage.setItem('stockPrices', JSON.stringify(stockPrices));
 }
 
 // === SNABBSALDO FUNKTIONER ===
@@ -60,7 +108,6 @@ function register() {
     const password = document.getElementById('regPassword').value;
     const password2 = document.getElementById('regPassword2').value;
 
-    // VALIDERING
     if (!username || !email || !password || !password2) {
         showError('Alla fält måste fyllas i');
         return;
@@ -81,13 +128,13 @@ function register() {
         return;
     }
 
-    // SKAPA NYT KONTO
     users[username] = {
         email: email,
         password: password,
-        balance: 1000,
+        balance: 10000,
         accountNumber: generateAccountNumber(),
-        transactions: []
+        transactions: [],
+        stocks: {}
     };
 
     localStorage.setItem('fbankUsers', JSON.stringify(users));
@@ -95,7 +142,6 @@ function register() {
     alert('Konto skapat! Du kan nu logga in.');
     toggleForms();
     
-    // Töm formulär
     document.getElementById('regUsername').value = '';
     document.getElementById('regEmail').value = '';
     document.getElementById('regPassword').value = '';
@@ -122,6 +168,8 @@ function login() {
     showError('');
     switchScreen('dashboardScreen');
     updateDashboard();
+    fetchStockPrices();
+    displayStocks();
 }
 
 // LOGGA UT
@@ -147,6 +195,20 @@ function switchScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
 }
 
+// BYTA TAB
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    
+    document.getElementById(tabName + 'Tab').classList.add('active');
+    event.target.classList.add('active');
+    
+    if (tabName === 'aktier') {
+        updateStockPrices();
+        displayStocks();
+    }
+}
+
 // UPPDATERA DASHBOARD
 function updateDashboard() {
     const user = users[currentUser];
@@ -154,6 +216,210 @@ function updateDashboard() {
     document.getElementById('balanceDisplay').textContent = user.balance.toLocaleString('sv-SE') + ' kr';
     document.getElementById('accountNumber').textContent = 'Kontonummer: ' + user.accountNumber;
     updateTransactionList();
+}
+
+// VISA AKTIER
+function displayStocks() {
+    const list = document.getElementById('stocksList');
+    const user = users[currentUser];
+    
+    list.innerHTML = stocks.map(stock => {
+        const price = stockPrices[stock.ticker] || { price: 0, change: 0 };
+        const changeClass = price.change >= 0 ? 'up' : 'down';
+        const changeSymbol = price.change >= 0 ? '▲' : '▼';
+        const userOwns = user.stocks && user.stocks[stock.ticker] ? user.stocks[stock.ticker] : 0;
+        
+        return `
+            <div class="stock-card">
+                <div class="stock-info">
+                    <div class="stock-name">${stock.name}</div>
+                    <div class="stock-ticker">${stock.ticker} ${userOwns > 0 ? `| Du äger: ${userOwns} st` : ''}</div>
+                </div>
+                <div class="stock-price-section">
+                    <div class="stock-price">${price.price.toFixed(2)} kr</div>
+                    <div class="stock-change ${changeClass}">${changeSymbol} ${Math.abs(price.change).toFixed(2)} kr</div>
+                </div>
+                <div class="stock-actions">
+                    <button class="stock-action-btn btn-buy" onclick="openBuyStockModal('${stock.ticker}', '${stock.name}', ${price.price})">Köp</button>
+                    ${userOwns > 0 ? `<button class="stock-action-btn btn-sell" onclick="openSellStockModal('${stock.ticker}', '${stock.name}', ${price.price})">Sälja</button>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    displayPortfolio();
+}
+
+// VISA PORTFÖLJÖ
+function displayPortfolio() {
+    const user = users[currentUser];
+    const portfolioSection = document.getElementById('portfolioSection');
+    const portfolioList = document.getElementById('portfolioList');
+    
+    if (!user.stocks || Object.keys(user.stocks).length === 0) {
+        portfolioSection.classList.remove('show');
+        return;
+    }
+    
+    portfolioSection.classList.add('show');
+    let totalValue = 0;
+    let totalGain = 0;
+    
+    let html = '';
+    for (let ticker in user.stocks) {
+        const qty = user.stocks[ticker].quantity;
+        const buyPrice = user.stocks[ticker].avgPrice;
+        const currentPrice = stockPrices[ticker]?.price || buyPrice;
+        const value = qty * currentPrice;
+        const gain = value - (qty * buyPrice);
+        const gainClass = gain >= 0 ? 'positive' : 'negative';
+        
+        totalValue += value;
+        totalGain += gain;
+        
+        const stock = stocks.find(s => s.ticker === ticker);
+        
+        html += `
+            <div class="portfolio-item">
+                <div class="portfolio-info">
+                    <div class="portfolio-name">${stock.name}</div>
+                    <div class="portfolio-qty">${qty} aktier @ ${buyPrice.toFixed(2)} kr</div>
+                </div>
+                <div class="portfolio-value">
+                    <div class="portfolio-value-text">${value.toFixed(2)} kr</div>
+                    <div class="portfolio-gain ${gainClass}">${gain >= 0 ? '+' : ''}${gain.toFixed(2)} kr</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    portfolioList.innerHTML = html;
+}
+
+// KÖP AKTIE MODAL
+function openBuyStockModal(ticker, name, price) {
+    currentBuyStock = { ticker, name, price };
+    document.getElementById('buyStockTitle').textContent = `Köp ${name}`;
+    document.getElementById('buyStockPrice').textContent = `Pris: ${price.toFixed(2)} kr per aktie`;
+    document.getElementById('buyStockQty').value = '1';
+    updateBuyTotal();
+    document.getElementById('buyStockModal').classList.remove('hidden');
+}
+
+function closeBuyStockModal() {
+    document.getElementById('buyStockModal').classList.add('hidden');
+}
+
+function updateBuyTotal() {
+    const qty = parseInt(document.getElementById('buyStockQty').value) || 0;
+    const total = qty * currentBuyStock.price;
+    document.getElementById('buyStockTotal').textContent = `Totalt: ${total.toFixed(2)} kr`;
+}
+
+function confirmBuyStock() {
+    const qty = parseInt(document.getElementById('buyStockQty').value);
+    const user = users[currentUser];
+    const total = qty * currentBuyStock.price;
+    
+    if (qty <= 0) {
+        alert('Ange en giltig mängd');
+        return;
+    }
+    
+    if (user.balance < total) {
+        alert('Du har inte tillräckligt med pengar');
+        return;
+    }
+    
+    user.balance -= total;
+    
+    if (!user.stocks) user.stocks = {};
+    if (!user.stocks[currentBuyStock.ticker]) {
+        user.stocks[currentBuyStock.ticker] = { quantity: 0, avgPrice: 0 };
+    }
+    
+    const oldQty = user.stocks[currentBuyStock.ticker].quantity;
+    const oldCost = oldQty * user.stocks[currentBuyStock.ticker].avgPrice;
+    const newQty = oldQty + qty;
+    const newAvgPrice = (oldCost + total) / newQty;
+    
+    user.stocks[currentBuyStock.ticker].quantity = newQty;
+    user.stocks[currentBuyStock.ticker].avgPrice = newAvgPrice;
+    
+    const timestamp = new Date().toLocaleString('sv-SE');
+    user.transactions.push({
+        type: `Köpt ${qty} st ${currentBuyStock.name}`,
+        amount: -total,
+        timestamp: timestamp,
+        message: ''
+    });
+    
+    localStorage.setItem('fbankUsers', JSON.stringify(users));
+    closeBuyStockModal();
+    showSuccess(`Köpte ${qty} st ${currentBuyStock.name}`);
+    displayStocks();
+    updateDashboard();
+}
+
+// SÄLJA AKTIE MODAL
+function openSellStockModal(ticker, name, price) {
+    const user = users[currentUser];
+    const owned = user.stocks[ticker].quantity;
+    
+    currentSellStock = { ticker, name, price, maxQty: owned };
+    document.getElementById('sellStockTitle').textContent = `Sälja ${name}`;
+    document.getElementById('sellStockPrice').textContent = `Pris: ${price.toFixed(2)} kr per aktie (Du äger: ${owned} st)`;
+    document.getElementById('sellStockQty').value = '1';
+    document.getElementById('sellStockQty').max = owned;
+    updateSellTotal();
+    document.getElementById('sellStockModal').classList.remove('hidden');
+}
+
+function closeSellStockModal() {
+    document.getElementById('sellStockModal').classList.add('hidden');
+}
+
+function updateSellTotal() {
+    const qty = parseInt(document.getElementById('sellStockQty').value) || 0;
+    const total = qty * currentSellStock.price;
+    document.getElementById('sellStockTotal').textContent = `Får: ${total.toFixed(2)} kr`;
+}
+
+function confirmSellStock() {
+    const qty = parseInt(document.getElementById('sellStockQty').value);
+    const user = users[currentUser];
+    const total = qty * currentSellStock.price;
+    
+    if (qty <= 0) {
+        alert('Ange en giltig mängd');
+        return;
+    }
+    
+    if (qty > currentSellStock.maxQty) {
+        alert('Du kan inte sälja mer än du äger');
+        return;
+    }
+    
+    user.balance += total;
+    user.stocks[currentSellStock.ticker].quantity -= qty;
+    
+    if (user.stocks[currentSellStock.ticker].quantity === 0) {
+        delete user.stocks[currentSellStock.ticker];
+    }
+    
+    const timestamp = new Date().toLocaleString('sv-SE');
+    user.transactions.push({
+        type: `Såld ${qty} st ${currentSellStock.name}`,
+        amount: total,
+        timestamp: timestamp,
+        message: ''
+    });
+    
+    localStorage.setItem('fbankUsers', JSON.stringify(users));
+    closeSellStockModal();
+    showSuccess(`Sålde ${qty} st ${currentSellStock.name}`);
+    displayStocks();
+    updateDashboard();
 }
 
 // VISA ÖVERFÖRINGSFORMULÄR
@@ -219,11 +485,9 @@ function transferMoney() {
         return;
     }
 
-    // UTFÖR ÖVERFÖRING
     user.balance -= amount;
     users[recipient].balance += amount;
 
-    // LÄGG TILL I TRANSAKTIONSHISTORIK
     const timestamp = new Date().toLocaleString('sv-SE');
     user.transactions.push({
         type: 'Överföring till ' + recipient,
@@ -241,7 +505,7 @@ function transferMoney() {
 
     localStorage.setItem('fbankUsers', JSON.stringify(users));
     
-    showSuccess(amount + ' kr skickades till ' + recipient);
+    showSuccess('Pengar överförda! ' + amount + ' kr skickades till ' + recipient);
     document.getElementById('recipientUsername').value = '';
     document.getElementById('transferAmount').value = '';
     document.getElementById('transferMessage').value = '';
@@ -316,7 +580,7 @@ function updateTransactionList() {
     const user = users[currentUser];
     const list = document.getElementById('transactionList');
     
-    if (user.transactions.length === 0) {
+    if (!user.transactions || user.transactions.length === 0) {
         list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Inga transaktioner än</p>';
         return;
     }
@@ -360,3 +624,8 @@ function showSuccess(message) {
     }, 3000);
 }
 
+// Uppdatera köp/säljformulär dynamiskt
+document.addEventListener('input', function(e) {
+    if (e.target.id === 'buyStockQty') updateBuyTotal();
+    if (e.target.id === 'sellStockQty') updateSellTotal();
+});
