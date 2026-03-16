@@ -13,16 +13,27 @@
     --swedbank-light: #F5F5F7;
     --success-green: #34C759;
     --error-red: #FF3B30;
+    --text-primary: #1A1A1E;
+    --text-secondary: #666;
+    --border-color: #E8E8E8;
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--swedbank-light);
     min-height: 100vh;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
+    transition: background-color 0.3s, color 0.3s;
 }
 
-/* SKÄRMAR */
+body.dark-mode {
+    background: #1a1a1e;
+    color: #f5f5f7;
+    --text-primary: #f5f5f7;
+    --text-secondary: #999;
+    --border-color: #333;
+}
+
 .screen {
     display: none;
 }
@@ -31,18 +42,21 @@ body {
     display: block;
 }
 
-/* LOGIN SKÄRM */
 #loginScreen {
     min-height: 100vh;
     display: none;
     justify-content: center;
     align-items: center;
     padding: 20px;
-    background: linear-gradient(135deg, var(--swedbank-green) 0%, #00923A 100%);
+    background: linear-gradient(135deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
 }
 
 #loginScreen.active {
     display: flex;
+}
+
+#loginScreen.dark-mode {
+    background: linear-gradient(135deg, #006622 0%, #CC4400 100%);
 }
 
 .login-wrapper {
@@ -55,6 +69,11 @@ body {
     border-radius: 24px;
     padding: 50px 40px;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.dark-mode .login-box {
+    background: #2a2a2e;
+    color: #f5f5f7;
 }
 
 .logo-section {
@@ -88,7 +107,7 @@ body {
 }
 
 .tagline {
-    color: #999;
+    color: var(--text-secondary);
     font-size: 14px;
     margin-bottom: 40px;
     text-align: center;
@@ -106,7 +125,7 @@ body {
 .form-section h2 {
     font-size: 20px;
     margin-bottom: 24px;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
     font-weight: 700;
 }
 
@@ -114,12 +133,18 @@ body {
     width: 100%;
     padding: 14px 16px;
     margin-bottom: 14px;
-    border: 2px solid #E8E8E8;
+    border: 2px solid var(--border-color);
     border-radius: 12px;
     font-size: 15px;
     transition: all 0.3s;
     background: #FAFAFA;
     font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+}
+
+.dark-mode .input-field {
+    background: #333;
+    border-color: #444;
 }
 
 .input-field:focus {
@@ -127,6 +152,10 @@ body {
     border-color: var(--swedbank-green);
     background: white;
     box-shadow: 0 0 0 4px rgba(0, 170, 68, 0.1);
+}
+
+.dark-mode .input-field:focus {
+    background: #2a2a2e;
 }
 
 .btn-primary {
@@ -173,10 +202,23 @@ body {
     color: white;
 }
 
+.btn-icon {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 12px;
+    transition: all 0.3s;
+}
+
+.btn-icon:hover {
+    transform: scale(1.2);
+}
+
 .form-link {
     text-align: center;
     margin-top: 20px;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 14px;
 }
 
@@ -202,11 +244,14 @@ body {
     display: none;
 }
 
+.dark-mode .error-message {
+    background: rgba(255, 59, 48, 0.2);
+}
+
 .error-message.show {
     display: block;
 }
 
-/* MODAL */
 .modal {
     position: fixed;
     top: 0;
@@ -217,6 +262,7 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 2000;
+    overflow-y: auto;
 }
 
 .modal:not(.hidden) {
@@ -242,11 +288,17 @@ body {
     border-radius: 24px;
     padding: 45px 35px;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-    max-width: 420px;
+    max-width: 500px;
     width: 90%;
     position: relative;
     max-height: 90vh;
     overflow-y: auto;
+    margin: auto;
+}
+
+.dark-mode .modal-content {
+    background: #2a2a2e;
+    color: #f5f5f7;
 }
 
 .btn-close {
@@ -256,13 +308,13 @@ body {
     background: transparent;
     border: none;
     font-size: 24px;
-    color: #999;
+    color: var(--text-secondary);
     cursor: pointer;
     transition: color 0.3s;
 }
 
 .btn-close:hover {
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
 }
 
 .modal-title {
@@ -275,7 +327,7 @@ body {
 .modal-price {
     font-size: 16px;
     font-weight: 700;
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 20px;
 }
 
@@ -290,6 +342,10 @@ body {
     border-radius: 12px;
 }
 
+.dark-mode .modal-total {
+    background: #333;
+}
+
 .modal-gain {
     text-align: center;
     font-size: 14px;
@@ -298,6 +354,10 @@ body {
     padding: 12px;
     border-radius: 12px;
     background: #F0F0F0;
+}
+
+.dark-mode .modal-gain {
+    background: #333;
 }
 
 .modal-gain.positive {
@@ -311,7 +371,7 @@ body {
 }
 
 .balance-label {
-    color: #999;
+    color: var(--text-secondary);
     font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
@@ -346,20 +406,28 @@ body {
     font-size: 13px;
 }
 
+.dark-mode .shortcut-btn {
+    background: #333;
+}
+
 .shortcut-btn:hover {
     background: var(--swedbank-green);
     color: white;
 }
 
-/* DASHBOARD */
 #dashboardScreen {
     background: var(--swedbank-light);
     min-height: 100vh;
     display: none;
+    transition: background-color 0.3s;
 }
 
 #dashboardScreen.active {
     display: block;
+}
+
+.dark-mode#dashboardScreen {
+    background: #1a1a1e;
 }
 
 .header {
@@ -370,6 +438,11 @@ body {
     align-items: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border-bottom: 3px solid var(--swedbank-green);
+    transition: background-color 0.3s;
+}
+
+.dark-mode .header {
+    background: #2a2a2e;
 }
 
 .header-content {
@@ -399,9 +472,22 @@ body {
 
 .user-greeting {
     margin-left: 16px;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
     font-weight: 700;
     font-size: 14px;
+}
+
+.daily-bonus {
+    margin-left: 8px;
+    color: var(--swedbank-orange);
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }
 
 .btn-logout {
@@ -428,12 +514,12 @@ body {
     padding: 24px 20px;
 }
 
-/* NAVIGATION TABS */
 .nav-tabs {
     display: flex;
     gap: 8px;
     margin-bottom: 24px;
-    border-bottom: 2px solid #E8E8E8;
+    border-bottom: 2px solid var(--border-color);
+    overflow-x: auto;
 }
 
 .nav-tab {
@@ -444,9 +530,10 @@ body {
     cursor: pointer;
     font-weight: 700;
     font-size: 14px;
-    color: #999;
+    color: var(--text-secondary);
     transition: all 0.3s;
     font-family: 'Inter', sans-serif;
+    white-space: nowrap;
 }
 
 .nav-tab.active {
@@ -458,7 +545,6 @@ body {
     color: var(--swedbank-green);
 }
 
-/* TAB CONTENT */
 .tab-content {
     display: none;
 }
@@ -467,7 +553,6 @@ body {
     display: block;
 }
 
-/* SALDO KORT */
 .balance-card {
     background: linear-gradient(135deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
     color: white;
@@ -498,7 +583,6 @@ body {
     font-weight: 600;
 }
 
-/* ACTIONS GRID */
 .actions-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -508,7 +592,7 @@ body {
 
 .action-card {
     background: white;
-    border: 2px solid #E8E8E8;
+    border: 2px solid var(--border-color);
     border-radius: 16px;
     padding: 24px 16px;
     text-align: center;
@@ -516,8 +600,13 @@ body {
     transition: all 0.3s;
     font-size: 13px;
     font-weight: 700;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
     font-family: 'Inter', sans-serif;
+}
+
+.dark-mode .action-card {
+    background: #2a2a2e;
+    border-color: #333;
 }
 
 .action-card:hover {
@@ -531,15 +620,20 @@ body {
     margin-bottom: 10px;
 }
 
-/* FORM CARDS */
 .form-card {
     background: white;
     padding: 28px;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #E8E8E8;
+    border: 1px solid var(--border-color);
     margin-bottom: 24px;
     display: none;
+    transition: background-color 0.3s;
+}
+
+.dark-mode .form-card {
+    background: #2a2a2e;
+    border-color: #333;
 }
 
 .form-card.hidden {
@@ -553,7 +647,7 @@ body {
 
 .form-card h3 {
     margin-bottom: 20px;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
     font-size: 18px;
     font-weight: 700;
 }
@@ -567,7 +661,7 @@ body {
     font-weight: 700;
     font-size: 13px;
     margin-bottom: 8px;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
 }
 
 .button-group {
@@ -588,7 +682,15 @@ textarea.input-field {
     font-family: 'Inter', sans-serif;
 }
 
-/* TRANSAKTIONSLISTA */
+select.input-field {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 1.5em;
+    padding-right: 2.5em;
+}
+
 .transaction-list {
     max-height: 500px;
     overflow-y: auto;
@@ -599,7 +701,7 @@ textarea.input-field {
     justify-content: space-between;
     align-items: center;
     padding: 14px 0;
-    border-bottom: 1px solid #E8E8E8;
+    border-bottom: 1px solid var(--border-color);
     transition: background 0.2s;
 }
 
@@ -608,6 +710,10 @@ textarea.input-field {
     padding: 14px 12px;
     margin: 0 -12px;
     border-radius: 8px;
+}
+
+.dark-mode .transaction-item:hover {
+    background: #333;
 }
 
 .transaction-item:last-child {
@@ -620,14 +726,14 @@ textarea.input-field {
 
 .transaction-type {
     font-weight: 700;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
     margin-bottom: 4px;
     font-size: 14px;
 }
 
 .transaction-date {
     font-size: 12px;
-    color: #999;
+    color: var(--text-secondary);
 }
 
 .transaction-amount {
@@ -642,10 +748,56 @@ textarea.input-field {
 }
 
 .transaction-amount.expense {
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
 }
 
-/* STOCKS HEADER */
+.recurring-list {
+    margin-top: 20px;
+}
+
+.recurring-item {
+    background: #F0F0F0;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dark-mode .recurring-item {
+    background: #333;
+}
+
+.recurring-item .btn-icon {
+    color: var(--error-red);
+    padding: 0;
+}
+
+.friends-list {
+    margin-top: 20px;
+}
+
+.friend-item {
+    background: #F0F0F0;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.dark-mode .friend-item {
+    background: #333;
+}
+
+.friend-item .btn-icon {
+    color: var(--error-red);
+    padding: 0;
+}
+
 .stocks-header {
     margin-bottom: 24px;
 }
@@ -653,10 +805,9 @@ textarea.input-field {
 .stocks-header h2 {
     font-size: 22px;
     font-weight: 800;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
 }
 
-/* STOCKS LIST */
 .stocks-list {
     display: grid;
     gap: 12px;
@@ -666,11 +817,15 @@ textarea.input-field {
     background: #FAFAFA;
     padding: 16px;
     border-radius: 14px;
-    border: 1px solid #E8E8E8;
+    border: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.3s;
+}
+
+.dark-mode .stock-card {
+    background: #2a2a2e;
 }
 
 .stock-card:hover {
@@ -685,13 +840,13 @@ textarea.input-field {
 .stock-name {
     font-weight: 700;
     font-size: 15px;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
     margin-bottom: 4px;
 }
 
 .stock-ticker {
     font-size: 12px;
-    color: #999;
+    color: var(--text-secondary);
 }
 
 .stock-price-section {
@@ -702,7 +857,7 @@ textarea.input-field {
 .stock-price {
     font-size: 16px;
     font-weight: 800;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
 }
 
 .stock-change {
@@ -747,23 +902,31 @@ textarea.input-field {
 
 .btn-sell {
     background: #F0F0F0;
-    color: var(--swedbank-dark);
-    border: 1px solid #E8E8E8;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.dark-mode .btn-sell {
+    background: #333;
 }
 
 .btn-sell:hover {
-    background: #E8E8E8;
+    background: var(--border-color);
 }
 
-/* PORTFÖLJÖ */
 .portfolio-card {
     background: white;
     padding: 28px;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid #E8E8E8;
+    border: 1px solid var(--border-color);
     margin-bottom: 24px;
     display: none;
+    transition: background-color 0.3s;
+}
+
+.dark-mode .portfolio-card {
+    background: #2a2a2e;
 }
 
 .portfolio-card.show {
@@ -772,7 +935,7 @@ textarea.input-field {
 
 .portfolio-card h3 {
     margin-bottom: 20px;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
     font-size: 18px;
     font-weight: 700;
 }
@@ -788,12 +951,17 @@ textarea.input-field {
     background: #FAFAFA;
     padding: 14px;
     border-radius: 12px;
-    border: 1px solid #E8E8E8;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s;
+}
+
+.dark-mode .portfolio-stat {
+    background: #333;
 }
 
 .portfolio-stat-label {
     font-size: 11px;
-    color: #999;
+    color: var(--text-secondary);
     font-weight: 700;
     text-transform: uppercase;
     margin-bottom: 6px;
@@ -802,7 +970,7 @@ textarea.input-field {
 .portfolio-stat-value {
     font-size: 18px;
     font-weight: 800;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
 }
 
 .portfolio-stat-value.positive {
@@ -828,28 +996,33 @@ textarea.input-field {
     background: #FAFAFA;
     padding: 14px;
     border-radius: 12px;
-    border: 1px solid #E8E8E8;
+    border: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: background-color 0.3s;
+}
+
+.dark-mode .portfolio-item {
+    background: #333;
 }
 
 .portfolio-name {
     font-weight: 700;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
     margin-bottom: 4px;
     font-size: 14px;
 }
 
 .portfolio-qty {
     font-size: 12px;
-    color: #999;
+    color: var(--text-secondary);
 }
 
 .portfolio-value-text {
     font-weight: 700;
     font-size: 15px;
-    color: var(--swedbank-dark);
+    color: var(--text-primary);
 }
 
 .portfolio-gain {
@@ -866,7 +1039,331 @@ textarea.input-field {
     color: var(--error-red);
 }
 
-/* TOAST MESSAGE */
+/* SPARMÅL */
+.goals-list {
+    display: grid;
+    gap: 14px;
+}
+
+.goal-card {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s;
+}
+
+.dark-mode .goal-card {
+    background: #2a2a2e;
+}
+
+.goal-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 170, 68, 0.1);
+}
+
+.goal-name {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.goal-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.goal-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--swedbank-green) 0%, var(--swedbank-orange) 100%);
+    transition: width 0.3s;
+}
+
+.goal-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.goal-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.goal-actions button {
+    flex: 1;
+    padding: 8px;
+    font-size: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.goal-add-btn {
+    background: var(--swedbank-green);
+    color: white;
+}
+
+.goal-delete-btn {
+    background: #F0F0F0;
+    color: var(--error-red);
+}
+
+.dark-mode .goal-delete-btn {
+    background: #333;
+}
+
+/* BUDGET */
+.budget-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.budget-stat {
+    background: #FAFAFA;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.dark-mode .budget-stat {
+    background: #333;
+}
+
+.budget-stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.budget-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.monthly-report {
+    background: #FAFAFA;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    transition: background-color 0.3s;
+}
+
+.dark-mode .monthly-report {
+    background: #333;
+}
+
+/* PROFIL */
+.profile-section {
+    max-width: 800px;
+}
+
+.profile-section h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+}
+
+.profile-card {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 28px;
+    transition: background-color 0.3s;
+}
+
+.dark-mode .profile-card {
+    background: #2a2a2e;
+}
+
+.avatar-section {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.user-avatar {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.profile-info p {
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.profile-info strong {
+    color: var(--text-primary);
+}
+
+.achievements-section {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 28px;
+    transition: background-color 0.3s;
+}
+
+.dark-mode .achievements-section {
+    background: #2a2a2e;
+}
+
+.achievements-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.achievements-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.achievement-badge {
+    background: #FAFAFA;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    border: 2px solid var(--border-color);
+}
+
+.dark-mode .achievement-badge {
+    background: #333;
+}
+
+.achievement-badge:hover {
+    transform: scale(1.05);
+    border-color: var(--swedbank-green);
+}
+
+.achievement-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.achievement-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.achievement-badge.locked {
+    opacity: 0.5;
+}
+
+.leaderboard-section {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s;
+}
+
+.dark-mode .leaderboard-section {
+    background: #2a2a2e;
+}
+
+.leaderboard-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.leaderboard-list {
+    display: grid;
+    gap: 12px;
+}
+
+.leaderboard-item {
+    background: #FAFAFA;
+    padding: 14px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.3s;
+}
+
+.dark-mode .leaderboard-item {
+    background: #333;
+}
+
+.leaderboard-rank {
+    font-size: 18px;
+    font-weight: 800;
+    width: 30px;
+    text-align: center;
+}
+
+.leaderboard-rank.rank-1 {
+    color: #FFD700;
+}
+
+.leaderboard-rank.rank-2 {
+    color: #C0C0C0;
+}
+
+.leaderboard-rank.rank-3 {
+    color: #CD7F32;
+}
+
+.leaderboard-info {
+    flex: 1;
+}
+
+.leaderboard-name {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.leaderboard-value {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.leaderboard-gain {
+    font-weight: 700;
+    color: var(--success-green);
+}
+
+.settings-group {
+    margin-bottom: 20px;
+}
+
+.settings-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.settings-group input[type="checkbox"] {
+    margin-right: 8px;
+}
+
 .toast-message {
     position: fixed;
     top: 20px;
@@ -909,7 +1406,6 @@ textarea.input-field {
     }
 }
 
-/* RESPONSIV */
 @media (max-width: 768px) {
     .login-box {
         padding: 35px 25px;
@@ -924,8 +1420,7 @@ textarea.input-field {
     }
 
     .header {
-        flex-direction: column;
-        gap: 12px;
+        flex-wrap: wrap;
     }
 
     .main-content {
@@ -968,6 +1463,11 @@ textarea.input-field {
     .chart-container {
         height: 240px;
     }
+
+    .nav-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 @media (max-width: 480px) {
@@ -984,15 +1484,6 @@ textarea.input-field {
         gap: 8px;
     }
 
-    .nav-tabs {
-        flex-wrap: wrap;
-    }
-
-    .nav-tab {
-        padding: 10px 16px;
-        font-size: 12px;
-    }
-
     .portfolio-stats {
         grid-template-columns: 1fr;
     }
@@ -1004,5 +1495,9 @@ textarea.input-field {
     .toast-message {
         left: 10px;
         right: 10px;
+    }
+
+    .achievements-list {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
