@@ -23,6 +23,8 @@ body {
     --swedbank-dark-gray: #1d1d1f;
     --success-color: #34C759;
     --error-color: #FF3B30;
+    --up-color: #34C759;
+    --down-color: #FF3B30;
 }
 
 /* SKÄRMAR */
@@ -447,6 +449,45 @@ body {
     padding: 30px 20px;
 }
 
+/* NAVIGATION TABS */
+.nav-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.nav-tab {
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    color: #999;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.nav-tab.active {
+    color: var(--swedbank-green);
+    border-bottom-color: var(--swedbank-green);
+}
+
+.nav-tab:hover {
+    color: var(--swedbank-green);
+}
+
+/* TAB CONTENT */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 /* SALDO KORT - SWEDBANK STIL */
 .balance-card {
     background: linear-gradient(135deg, var(--swedbank-green) 0%, #00923A 100%);
@@ -643,6 +684,243 @@ textarea.input-field {
     color: var(--swedbank-dark-gray);
 }
 
+/* AKTIEDEPÅ SEKTION */
+.stocks-header {
+    margin-bottom: 30px;
+}
+
+.stocks-header h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--swedbank-dark-gray);
+    margin-bottom: 8px;
+}
+
+.stocks-info {
+    color: #999;
+    font-size: 13px;
+}
+
+.stocks-section {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    margin-bottom: 30px;
+}
+
+.stocks-section h3 {
+    margin-bottom: 22px;
+    color: var(--swedbank-dark-gray);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.stocks-list {
+    display: grid;
+    gap: 16px;
+}
+
+.stock-card {
+    background: #f9f9f9;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.stock-card:hover {
+    border-color: var(--swedbank-green);
+    box-shadow: 0 4px 12px rgba(0, 170, 68, 0.1);
+}
+
+.stock-info {
+    flex: 1;
+}
+
+.stock-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--swedbank-dark-gray);
+    margin-bottom: 6px;
+}
+
+.stock-ticker {
+    font-size: 12px;
+    color: #999;
+}
+
+.stock-price-section {
+    text-align: right;
+    margin-right: 20px;
+}
+
+.stock-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--swedbank-dark-gray);
+}
+
+.stock-change {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.stock-change.up {
+    color: var(--up-color);
+}
+
+.stock-change.down {
+    color: var(--down-color);
+}
+
+.stock-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.stock-action-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-buy {
+    background: var(--swedbank-green);
+    color: white;
+}
+
+.btn-buy:hover {
+    background: #00923A;
+    transform: translateY(-2px);
+}
+
+.btn-sell {
+    background: #f0f0f0;
+    color: var(--swedbank-dark-gray);
+    border: 1px solid #e0e0e0;
+}
+
+.btn-sell:hover {
+    background: #e0e0e0;
+}
+
+/* PORTFÖLJÖ */
+.portfolio-section {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    margin-bottom: 30px;
+    display: none;
+}
+
+.portfolio-section.show {
+    display: block;
+}
+
+.portfolio-section h3 {
+    margin-bottom: 22px;
+    color: var(--swedbank-dark-gray);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.portfolio-list {
+    display: grid;
+    gap: 14px;
+}
+
+.portfolio-item {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.portfolio-info {
+    flex: 1;
+}
+
+.portfolio-name {
+    font-weight: 700;
+    color: var(--swedbank-dark-gray);
+    margin-bottom: 4px;
+}
+
+.portfolio-qty {
+    font-size: 12px;
+    color: #999;
+}
+
+.portfolio-value {
+    text-align: right;
+}
+
+.portfolio-value-text {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--swedbank-dark-gray);
+}
+
+.portfolio-gain {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.portfolio-gain.positive {
+    color: var(--success-color);
+}
+
+.portfolio-gain.negative {
+    color: var(--error-color);
+}
+
+/* STOCK INPUT GROUP */
+.stock-input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.stock-input-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: var(--swedbank-dark-gray);
+}
+
+.stock-price-modal {
+    font-size: 16px;
+    font-weight: 700;
+    color: #999;
+    margin-bottom: 20px;
+}
+
+.stock-total {
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--swedbank-green);
+    margin-bottom: 20px;
+}
+
 /* MEDDELANDEN */
 .success-message {
     position: fixed;
@@ -738,6 +1016,26 @@ textarea.input-field {
         max-width: 90%;
         padding: 40px 25px;
     }
+
+    .stock-card {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .stock-price-section {
+        width: 100%;
+        text-align: left;
+        margin-right: 0;
+        margin-bottom: 12px;
+    }
+
+    .stock-actions {
+        width: 100%;
+    }
+
+    .stock-action-btn {
+        flex: 1;
+    }
 }
 
 @media (max-width: 480px) {
@@ -768,5 +1066,14 @@ textarea.input-field {
 
     .modal-content {
         padding: 35px 20px;
+    }
+
+    .nav-tabs {
+        flex-wrap: wrap;
+    }
+
+    .nav-tab {
+        padding: 12px 16px;
+        font-size: 13px;
     }
 }
